@@ -107,7 +107,8 @@ extension options become tables, see <https://zensical.org/docs/setup/basics/>),
 - Override files classified as duplicates in step 1. A page template may keep `{% extends "main.html" %}`; it then
     extends the theme.
 - Logos, favicons and fonts under `docs/` that nothing references any more.
-- Brand rules in `extra_css`, and `extra_css` itself if nothing remains.
+- Brand rules in `extra_css`, and `extra_css` itself if nothing remains. Remaining site styles reference the
+    `--iscc-*` tokens and `--md-*` variables, not raw colour values.
 - Hot-linked images and badges: download them into `docs/` and link the copies.
 
 Never edit theme files inside a site. A change the site needs from the theme goes into the theme repository and a

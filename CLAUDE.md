@@ -41,8 +41,7 @@ uv run poe demo          # build the demo site and serve it on 127.0.0.1:45472
 - Keep the theme's promise of no third-party requests; `zensical_iscc/check.py` enforces it for sites.
 - Every page option, check and command change is reflected in `README.md`, `demo/zensical.toml` and
     `skills/iscc-docs-theme/SKILL.md`.
-- Theme styles reference the `--iscc-*` tokens and `--md-*` variables, never raw hex values. Content width is capped
-    at 1385px.
+- Content width is capped at 1385px.
 - Type hints as PEP 484 type comments. Short pure functions, a docstring on every module and function.
 - Commits follow Conventional Commits (`feat:`, `fix:`, `build:`, `docs:`, `ci:`).
 
