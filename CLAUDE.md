@@ -41,5 +41,20 @@ uv run poe demo          # build the demo site and serve it on 127.0.0.1:45472
 - Keep the theme's promise of no third-party requests; `zensical_iscc/check.py` enforces it for sites.
 - Every page option, check and command change is reflected in `README.md`, `demo/zensical.toml` and
     `skills/iscc-docs-theme/SKILL.md`.
+- Theme styles reference the `--iscc-*` tokens and `--md-*` variables, never raw hex values. Content width is capped
+    at 1385px.
 - Type hints as PEP 484 type comments. Short pure functions, a docstring on every module and function.
 - Commits follow Conventional Commits (`feat:`, `fix:`, `build:`, `docs:`, `ci:`).
+
+## Zensical quirks
+
+- Templates run on MiniJinja, not Jinja2: attribute access on an undefined value raises. Guard with
+    `{% set meta = page.meta or {} %}` before reading `meta.description`. `page.is_homepage` is unreliable, so
+    `main.html` also checks `page.url == ""`.
+- The modern variant styles `.md-nav--primary .md-nav__item .md-nav__link--active` and
+    `.md-header__button.md-logo img`; overrides in `theme.css` must match that specificity.
+- Zensical sets `html { font-size: 125% }` (20px), rising to 137.5% and 150% on wide screens. Rem-based third-party
+    widgets render larger; pin pixel values for them.
+- There is no plugin system for post-build steps; `zensical-iscc build` runs the Markdown export after
+    `zensical build`.
+- `zensical build --clean` clears the build cache, not the site directory.

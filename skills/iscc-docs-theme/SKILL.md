@@ -91,6 +91,13 @@ Markdown extensions and plugins. The rules that matter:
 | `[project.extra.analytics]`          | `provider = "plausible"`, `domain` = host name of `site_url`                   |
 | `copyright`                          | The ISCC footer from the demo, with the project's years                        |
 
+Two TOML traps:
+
+- Keep `nav = [...]` directly under `[project]`, before any subtable such as `[project.extra.iscc]` or
+    `[[project.extra.social]]`; after a table header TOML scopes it into that table.
+- Listing any Markdown extension replaces Zensical's default set, so the list must be complete. The demo's list is
+    the baseline; add the project's extras to it.
+
 Coming from `mkdocs.yml`: write `zensical.toml` by hand (MkDocs keys become keys of `[project]`, plugin and
 extension options become tables, see <https://zensical.org/docs/setup/basics/>), then delete `mkdocs.yml`.
 
