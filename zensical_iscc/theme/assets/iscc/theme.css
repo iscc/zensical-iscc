@@ -508,8 +508,11 @@
 /* ---------- Buttons ---------- */
 
 /* Calls to action are coral with near-black text (4.99:1); the secondary
- * button is an outlined near-black field. Both invert to near-black on hover. */
-.md-typeset .md-button {
+ * button is an outlined near-black field. Both invert to near-black on hover.
+ * `.iscc-btn` styles a plain link the same way, for rows of calls to action:
+ * [Start](start.md){ .iscc-btn .iscc-btn--primary } */
+.md-typeset .md-button,
+.md-typeset .iscc-btn {
   border: 1px solid var(--md-default-fg-color);
   border-radius: 0.15rem;
   color: var(--md-default-fg-color);
@@ -522,24 +525,34 @@
 }
 
 .md-typeset .md-button:hover,
-.md-typeset .md-button:focus {
+.md-typeset .md-button:focus,
+.md-typeset .iscc-btn:hover,
+.md-typeset .iscc-btn:focus {
   background-color: var(--md-default-fg-color);
   border-color: var(--md-default-fg-color);
   color: var(--md-default-bg-color);
   text-decoration: none;
 }
 
-.md-typeset .md-button--primary {
+.md-typeset .md-button--primary,
+.md-typeset .iscc-btn--primary {
   background-color: var(--iscc-coral);
   border-color: var(--iscc-coral);
   color: var(--iscc-ink);
 }
 
 .md-typeset .md-button--primary:hover,
-.md-typeset .md-button--primary:focus {
+.md-typeset .md-button--primary:focus,
+.md-typeset .iscc-btn--primary:hover,
+.md-typeset .iscc-btn--primary:focus {
   background-color: var(--md-default-fg-color);
   border-color: var(--md-default-fg-color);
   color: var(--md-default-bg-color);
+}
+
+.md-typeset .iscc-btn {
+  display: inline-block;
+  margin: 0.4em 0.5em 0.4em 0;
 }
 
 /* ---------- Header ---------- */
@@ -1069,6 +1082,73 @@ html .md-footer-meta.md-typeset a:hover {
   }
 }
 
+/* ---------- Page components ---------- */
+
+/* Opening paragraph set apart from the body copy by size, at the same light
+ * weight. Applied with { .iscc-lead } on the line after the paragraph. */
+.md-typeset .iscc-lead {
+  font-size: 1.2em;
+  line-height: 1.55;
+  color: var(--md-default-fg-color);
+  margin-bottom: 1.4em;
+}
+
+/* Audience cards: stacked on narrow screens, three across once there is room.
+ * Markup: <div class="iscc-cards" markdown> holding <div class="iscc-card" markdown>
+ * blocks, each with an h3, a paragraph and a closing paragraph with one link. */
+.iscc-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+  margin: 1.5em 0;
+}
+
+@media screen and (min-width: 60em) {
+  .iscc-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.md-typeset .iscc-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem 1.2rem 1rem;
+  border: 1px solid var(--iscc-rule);
+  border-top: 2px solid var(--iscc-ink);
+  border-radius: 0;
+  background-color: var(--iscc-field);
+  transition: border-color var(--iscc-motion-fast) var(--iscc-motion-easing);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .iscc-card {
+  border-top-color: var(--iscc-paper);
+}
+
+.md-typeset .iscc-card:hover {
+  border-color: var(--iscc-blue);
+}
+
+.md-typeset .iscc-card h3 {
+  margin: 0 0 0.5rem;
+  font-weight: 500;
+}
+
+/* Pin the call-to-action to the bottom so cards in a row line up */
+.md-typeset .iscc-card p:last-child {
+  margin-top: auto;
+  margin-bottom: 0;
+  padding-top: 0.7rem;
+}
+
+.md-typeset .iscc-card p:last-child a {
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.md-typeset .iscc-card p:last-child a:hover {
+  text-decoration: underline;
+}
+
 /* ---------- ISCC-UNIT colour helpers ---------- */
 
 /* One fixed colour per ISCC-UNIT for tables, badges and diagrams. Always pair
@@ -1109,6 +1189,8 @@ html .md-footer-meta.md-typeset a:hover {
 @media (prefers-reduced-motion: reduce) {
   .md-nav__link,
   .md-typeset .md-button,
+  .md-typeset .iscc-btn,
+  .md-typeset .iscc-card,
   .copy-page__split,
   .copy-page__action,
   .copy-page__toggle,

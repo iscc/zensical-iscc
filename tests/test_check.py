@@ -82,9 +82,10 @@ def test_metadata_findings():
 def test_analytics_findings():
     site = {"site_url": "https://core.iscc.codes/"}
     plausible = {"provider": "plausible", "domain": "core.iscc.codes"}
+    assert check.analytics_findings(site) == []
     assert check.analytics_findings({**site, "extra": {"analytics": plausible}}) == []
     assert check.analytics_findings({"extra": {"analytics": plausible}}) == []
-    assert len(check.analytics_findings(site)) == 1
+    assert check.analytics_findings({**site, "extra": {"analytics": {"src": "https://stats.iscc.codes/p.js"}}}) == []
     assert len(check.analytics_findings({**site, "extra": {"analytics": {"provider": "custom"}}})) == 1
     other = {"provider": "plausible", "domain": "iscc.codes"}
     findings = check.analytics_findings({**site, "extra": {"analytics": other}})

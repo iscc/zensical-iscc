@@ -31,9 +31,11 @@ Read before changing anything and note what you find:
         `partials/integrations/analytics/custom.html`, a logo partial. These go.
     - Site-specific: page templates selected with `template:` front matter, partials for features the theme
         lacks. These stay.
-- **Analytics domain**: the `data-domain` of the old Plausible snippet. Reuse it.
-- **Styling**: `extra_css` and `extra_javascript`. Rules that restyle fonts, colours or the logo go; component
-    styles stay.
+- **Analytics domain**: the `data-domain` of the old Plausible snippet. The theme counts visits under the host
+    name of `site_url`; note the old domain only if it differs.
+- **Styling**: `extra_css` and `extra_javascript`. Rules that restyle fonts, colours or the logo go, and so do
+    the lead paragraph, call-to-action and card styles that the theme provides (see its README, "Page
+    components"); other component styles stay.
 - **Third-party content**: hot-linked images and badges (shields.io and the like), web fonts, scripts from CDNs.
 - **Mermaid**: `custom_fences` with `mermaid`, or fenced `mermaid` blocks in the docs.
 - **Plugins**: mkdocstrings, glightbox, redirects and others; keep the ones Zensical supports.
@@ -45,7 +47,6 @@ Ask in one message, with your recommendation for each:
 
 - `tagline`, the suffix of the home page title, if the old overrides do not show one.
 - `chat = true` only if the human confirms that iscc.ai serves the site's domain.
-- The analytics domain if there was none before; the convention is the host name of `site_url`.
 - Mermaid diagrams: the theme does not serve Mermaid yet, and the Zensical bundle would load it from unpkg.com. Do
     not keep them without a decision.
 - Anything in the survey that looks site-specific but would also suit other ISCC sites: it may belong in the theme.
@@ -79,17 +80,17 @@ Then run `uv lock` and `uv sync`. Without uv:
 Start from `demo/zensical.toml`: replace every value marked `# site`, then carry over the project's own `nav`,
 Markdown extensions and plugins. The rules that matter:
 
-| Setting                              | Rule                                                                           |
-| ------------------------------------ | ------------------------------------------------------------------------------ |
-| `[project.theme] name`               | `"zensical_iscc"`                                                              |
-| `[project.theme] custom_dir`         | Only for site-specific overrides; never a copy of the theme, never `main.html` |
-| `font`, `logo`, `favicon`, `palette` | Leave unset; the theme provides them                                           |
-| `features`                           | Leave unset to get the theme defaults; never add `navigation.instant`          |
-| `site_url`                           | The published URL with a trailing slash                                        |
-| `edit_uri`                           | `"edit/main/<docs dir>/"`; the default points at a `master` branch             |
-| `[project.extra.iscc]`               | `tagline`, `copy_page = true`, `chat = false` unless confirmed                 |
-| `[project.extra.analytics]`          | `provider = "plausible"`, `domain` = host name of `site_url`                   |
-| `copyright`                          | The ISCC footer from the demo, with the project's years                        |
+| Setting                              | Rule                                                                             |
+| ------------------------------------ | -------------------------------------------------------------------------------- |
+| `[project.theme] name`               | `"zensical_iscc"`                                                                |
+| `[project.theme] custom_dir`         | Only for site-specific overrides; never a copy of the theme, never `main.html`   |
+| `font`, `logo`, `favicon`, `palette` | Leave unset; the theme provides them                                             |
+| `features`                           | Leave unset to get the theme defaults; never add `navigation.instant`            |
+| `site_url`                           | The published URL with a trailing slash                                          |
+| `edit_uri`                           | `"edit/main/<docs dir>/"`; the default points at a `master` branch               |
+| `[project.extra.iscc]`               | `tagline`, `copy_page = true`, `chat = false` unless confirmed                   |
+| `[project.extra.analytics]`          | Leave unset: Plausible counts the host of `site_url`; set `domain` if it differs |
+| `copyright`                          | The ISCC footer from the demo, with the project's years                          |
 
 Two TOML traps:
 
@@ -107,7 +108,8 @@ extension options become tables, see <https://zensical.org/docs/setup/basics/>),
 - Override files classified as duplicates in step 1. A page template may keep `{% extends "main.html" %}`; it then
     extends the theme.
 - Logos, favicons and fonts under `docs/` that nothing references any more.
-- Brand rules in `extra_css`, and `extra_css` itself if nothing remains. Remaining site styles reference the
+- Brand rules and theme-provided components (`.iscc-lead`, `.iscc-btn`, `.iscc-cards`, `.iscc-card`) in
+    `extra_css`, and `extra_css` itself if nothing remains. Remaining site styles reference the
     `--iscc-*` tokens and `--md-*` variables, not raw colour values.
 - Hot-linked images and badges: download them into `docs/` and link the copies.
 
@@ -139,6 +141,8 @@ too, so a theme bump rebuilds the site.
 1. Serve the built `site/` directory (for example `python -m http.server <port> --directory site`) and look at the
     home page and one inner page in the light and the dark scheme: ISCC logo, Readex Pro headings, "Copy page"
     button.
+1. If the host of `site_url` is new to Plausible, tell the human to add it at stats.iscc.codes; until then
+    visits are not counted.
 1. Search the repository for leftovers: `zensical_iscc/`, `gen_markdown_pages`, `mkdocs`, old logo file names.
 
 ## Upgrading the theme

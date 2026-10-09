@@ -1,0 +1,13 @@
+{#-
+  Analytics for every ISCC site: Plausible unless `[project.extra.analytics]`
+  names another provider. Zensical's own partial renders a provider only when
+  the site configures one.
+-#}
+{% set analytics = config.extra.analytics or {} %}
+{% set provider = analytics.provider | d("plausible", true) %}
+{% include "partials/integrations/analytics/" ~ provider ~ ".html" %}
+{% if config.extra.consent %}
+  <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+{% else %}
+  <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+{% endif %}

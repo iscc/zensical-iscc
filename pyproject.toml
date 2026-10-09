@@ -1,6 +1,6 @@
 [project]
 name = "zensical-iscc"
-version = "0.1.0"
+version = "0.2.0"
 description = "ISCC theme for Zensical documentation sites"
 authors = [{ name = "Titusz Pan", email = "tp@py7.de" }]
 readme = "README.md"

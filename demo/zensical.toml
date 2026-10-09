@@ -19,15 +19,12 @@ nav = [                                                               # site
     { "Components" = "components.md" },
 ]
 
-# Options read by the theme's main.html
+# Options read by the theme's main.html. Plausible analytics are on by default and count
+# the site under the host name of site_url; `[project.extra.analytics] domain` overrides it.
 [project.extra.iscc]
 tagline = "Zensical theme for ISCC documentation" # site: home page title suffix
 copy_page = true                                  # "Copy page" button; needs `zensical-iscc build`
 chat = false                                      # iscc.ai chat widget; only on origins iscc.ai allows
-
-[project.extra.analytics]
-provider = "plausible"
-domain = "example.iscc.codes" # site: the host name of site_url
 
 [[project.extra.social]]
 icon = "fontawesome/brands/github"

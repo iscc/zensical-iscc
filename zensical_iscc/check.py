@@ -84,7 +84,7 @@ def metadata_findings(config):
     """Check the site settings that titles, link previews and edit links depend on."""
     findings = []
     if not config.get("site_url"):
-        findings.append(warning("set `site_url`: link previews and canonical URLs need it"))
+        findings.append(warning("set `site_url`: link previews, canonical URLs and analytics need it"))
     if config.get("repo_url") and not config.get("edit_uri"):
         findings.append(warning('set `edit_uri` (for example "edit/main/docs/"): the default uses the master branch'))
     if not config.get("extra", {}).get("iscc", {}).get("tagline"):
@@ -94,13 +94,13 @@ def metadata_findings(config):
 
 def analytics_findings(config):
     # type: (dict) -> list[tuple[str, str]]
-    """Check that Plausible analytics count the site under its own host name."""
+    """Check that Plausible, the theme default, counts the site under its own host name."""
     analytics = config.get("extra", {}).get("analytics", {})
+    if analytics.get("provider", "plausible") != "plausible":
+        return [warning("[project.extra.analytics] replaces Plausible, which every ISCC site uses")]
     domain = analytics.get("domain")
-    if analytics.get("provider") != "plausible" or not domain:
-        return [warning('set `provider = "plausible"` and `domain` in [project.extra.analytics]')]
     host = urlsplit(config.get("site_url") or "").hostname
-    if host and domain != host:
+    if domain and host and domain != host:
         return [warning(f"analytics domain {domain} differs from the site_url host {host}")]
     return []
 

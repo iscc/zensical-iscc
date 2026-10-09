@@ -6,6 +6,52 @@ description: The page elements ISCC documentation uses, styled by the ISCC theme
 
 Every element below is styled by the theme. Check this page in both colour schemes after a theme or Zensical change.
 
+## Lead paragraph
+
+The opening paragraph of a page, set apart by size. Mark it with `{ .iscc-lead }` on the line after the paragraph.
+{ .iscc-lead }
+
+## Calls to action
+
+[Primary action](index.md){ .iscc-btn .iscc-btn--primary }
+[Second action](index.md){ .iscc-btn }
+
+## Cards
+
+<div class="iscc-cards" markdown>
+
+<div class="iscc-card" markdown>
+
+### Developers
+
+Generate ISCC codes from your own code with the libraries.
+
+[Get started →](index.md)
+
+</div>
+
+<div class="iscc-card" markdown>
+
+### Registries
+
+Declare content and make it discoverable on the network.
+
+[Declare →](index.md)
+
+</div>
+
+<div class="iscc-card" markdown>
+
+### Operators
+
+Run a service for mainnet or testnet.
+
+[Deploy →](index.md)
+
+</div>
+
+</div>
+
 ## Text
 
 Body copy with **strong**, *emphasis*, `inline code`, a [link](index.md) and an abbreviation: ISCC.

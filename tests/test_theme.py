@@ -92,3 +92,31 @@ def test_front_matter_location_redirects(demo_config):
     (docs / "moved.md").write_text("---\nlocation: ../components/\n---\n\n# Moved\n", encoding="utf-8")
     html = (build(demo_config) / "moved" / "index.html").read_text(encoding="utf-8")
     assert '<meta http-equiv="refresh" content="0;url=../components/">' in html
+
+
+def test_analytics_domain_override(demo_config):
+    edit_config(demo_config, "[project.theme]", '[project.extra.analytics]\ndomain = "iscc.codes"\n\n[project.theme]')
+    html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
+    assert 'data-domain="iscc.codes" src="https://stats.iscc.codes/js/plausible.js"' in html
+
+
+def test_no_analytics_without_site_url(demo_config):
+    edit_config(demo_config, 'site_url = "https://example.iscc.codes/"', "")
+    html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
+    assert "data-domain" not in html
+    assert "plausible.js" not in html
+
+
+def test_page_components_are_styled_by_the_theme(demo_config):
+    css = (THEME_DIR / "assets" / "iscc" / "theme.css").read_text(encoding="utf-8")
+    for selector in (
+        ".md-typeset .iscc-lead",
+        ".iscc-cards",
+        ".md-typeset .iscc-card",
+        ".md-typeset .iscc-btn--primary",
+    ):
+        assert selector in css
+    html = (build(demo_config) / "components" / "index.html").read_text(encoding="utf-8")
+    assert 'class="iscc-lead"' in html
+    assert 'class="iscc-btn iscc-btn--primary"' in html
+    assert html.count('class="iscc-card"') == 3

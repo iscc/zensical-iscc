@@ -15,7 +15,7 @@ is tested with, so the site does not require Zensical itself.
 docs = ["zensical-iscc"]
 
 [tool.uv.sources]
-zensical-iscc = { git = "https://github.com/iscc/zensical-iscc", tag = "v0.1.0" }
+zensical-iscc = { git = "https://github.com/iscc/zensical-iscc", tag = "v0.2.0" }
 ```
 
 Select the theme in `zensical.toml`. [`demo/zensical.toml`](demo/zensical.toml) is the complete reference
@@ -28,9 +28,9 @@ copy_page = true                                # default true
 chat = true                                     # default false
 # og_image = "assets/iscc/social-share.png"       # default
 
-[project.extra.analytics]
-provider = "plausible"
-domain = "iscc.codes"  # the host name of site_url
+# Plausible analytics are on by default; this table is only needed to change them
+# [project.extra.analytics]
+# domain = "iscc.codes"                             # default: the host name of site_url
 # src = "https://stats.iscc.codes/js/plausible.js"  # default
 
 [project.theme]
@@ -43,6 +43,9 @@ The theme sets `font = false` and serves the brand fonts itself. Do not set `the
 `theme.palette` unless a site needs a different mark. A site's `custom_dir` must not contain `main.html`: that file
 would replace the theme's own; page templates can extend it with `{% extends "main.html" %}`.
 
+Every ISCC site counts visits with Plausible under the host name of its `site_url`; register that host at
+stats.iscc.codes. A site without `site_url` gets no analytics.
+
 Build and check:
 
 ```bash
@@ -54,6 +57,33 @@ uv run zensical-iscc check --strict    # configuration and built site; non-zero 
 read `index.md` next to each rendered page, and `llms-full.txt` at the site root holds all pages in navigation
 order. The chat widget mounts only on origins that the iscc.ai token endpoint allows, so it stays silent on
 localhost.
+
+## Page components
+
+Besides restyling Zensical's own elements, the theme styles a few ISCC page components:
+
+| Class                                                                 | Use                                                                                                                                   |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `.iscc-lead`                                                          | Opening paragraph set apart by size: `{ .iscc-lead }` on the line after the paragraph                                                 |
+| `.iscc-btn`, `.iscc-btn--primary`                                     | Calls to action on a link, styled like Zensical's `.md-button`, spaced for a row: `[Start](start.md){ .iscc-btn .iscc-btn--primary }` |
+| `.iscc-cards`, `.iscc-card`                                           | Grid of audience cards, three across on wide screens; each card holds an `h3`, text and a closing paragraph with one link             |
+| `.iscc-unit--meta`, `--semantic`, `--content`, `--data`, `--instance` | ISCC-UNIT labels in their unit colours                                                                                                |
+
+Cards need `md_in_html`:
+
+```html
+<div class="iscc-cards" markdown="">
+ <div class="iscc-card" markdown="">
+  ### Developers
+
+Generate ISCC codes from your own code.
+
+[Get started →](start.md)
+ </div>
+</div>
+```
+
+The demo's [components page](demo/docs/components.md) shows all of them.
 
 ## For coding agents
 
@@ -69,8 +99,7 @@ Other agents can be pointed at the file directly.
 
 ## Third-party requests
 
-Pages request nothing from other origins except Plausible analytics, with chat enabled iscc.ai, and the GitHub
-request listed below. Fonts and GLightbox are served by the theme; Zensical's bundle would otherwise load GLightbox
+Pages request nothing from third parties except Plausible analytics and, with chat enabled, iscc.ai. Fonts and GLightbox are served by the theme; Zensical's bundle would otherwise load GLightbox
 from unpkg.com, which privacy tools such as Privacy Badger flag as a tracker. `zensical-iscc check` reports
 resources from other origins in the built HTML and CSS. Keep it that way when adding content:
 
@@ -81,8 +110,9 @@ resources from other origins in the built HTML and CSS. Keep it that way when ad
     bundle would then reach a lightbox page without a full load and fall back to unpkg.com.
 - The chat widget loads the fonts declared in iscc.ai's `public/theme.json`.
 
-Known gap: when `repo_url` is set, the bundle asks `api.github.com` for the repository's stars, forks and latest
-release to show them in the header. A static check cannot see this request.
+When `repo_url` is set, the bundle also asks `api.github.com` for the repository's stars, forks and latest release
+to show them in the header. ISCC sites are hosted on GitHub Pages, so GitHub is not a third party to them, and the
+request stays.
 
 ## Layout
 
@@ -91,6 +121,7 @@ release to show them in the header. A static check cannot see this request.
 | `zensical_iscc/theme/mkdocs_theme.yml`                               | Theme defaults: fonts off (self-hosted), favicon, features, palette                                                |
 | `zensical_iscc/theme/main.html`                                      | Brand stylesheets, social metadata, redirects, widget configuration                                                |
 | `zensical_iscc/theme/partials/logo.html`                             | Primary signature in both colourways, switched by scheme                                                           |
+| `zensical_iscc/theme/partials/integrations/analytics.html`           | Makes Plausible the default analytics provider                                                                     |
 | `zensical_iscc/theme/partials/integrations/analytics/plausible.html` | Plausible analytics provider                                                                                       |
 | `zensical_iscc/theme/assets/iscc/tokens/iscc.css`                    | Identity tokens, verbatim from the brand kit (`build/tokens/iscc.css`)                                             |
 | `zensical_iscc/theme/assets/iscc/theme.css`                          | Maps tokens onto Zensical variables and styles components                                                          |
@@ -125,8 +156,7 @@ instead of the kit's framed white/coral tile, so refresh `favicon.svg` and `favi
 - Admonitions are labelled and coloured by role: note and info Sky Blue, tip and success Lime, warning Yellow,
     danger Coral. The dark scheme uses a left rule and coloured title instead of a filled field.
 - Table headers, section labels and the footer directions use small JetBrains Mono capitals.
-- `.iscc-unit--meta`, `--semantic`, `--content`, `--data`, `--instance` colour ISCC-UNIT labels consistently;
-    always pair them with the unit name.
+- ISCC-UNIT labels (`.iscc-unit--*`) always pair the colour with the unit name.
 - Motion: 160 ms ease-out, disabled under `prefers-reduced-motion`.
 
 ## Development
@@ -145,8 +175,8 @@ To release, set `version` in `pyproject.toml`, merge to `main`, then tag and pub
 name the pinned Zensical version:
 
 ```bash
-git tag v0.1.0 && git push origin v0.1.0
-gh release create v0.1.0 --title v0.1.0 --notes "..."
+git tag vX.Y.Z && git push origin vX.Y.Z
+gh release create vX.Y.Z --title vX.Y.Z --notes "..."
 ```
 
 Sites move to the release by changing the `tag` in their `[tool.uv.sources]`.
