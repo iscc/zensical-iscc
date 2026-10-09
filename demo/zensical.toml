@@ -1,0 +1,64 @@
+# Reference configuration for an ISCC documentation site on the zensical-iscc theme.
+#
+# Sites copy this file and replace the values marked "site". Everything else is
+# the shared ISCC setup; change it only for a reason the site can name.
+# `zensical-iscc check` reports deviations that break the theme or its privacy rules.
+
+[project]
+site_name = "ISCC Theme Demo"                                         # site
+site_description = "Demo and reference site for the ISCC Zensical theme" # site
+site_author = "Titusz Pan"                                            # site
+site_url = "https://example.iscc.codes/"                              # site
+repo_url = "https://github.com/iscc/zensical-iscc"                    # site
+repo_name = "iscc/zensical-iscc"                                      # site
+edit_uri = "edit/main/demo/docs/"                                     # site: branch and docs path
+copyright = "<a href=\"https://iscc.io/foundation\">ISCC Foundation</a> | Documentation licensed under <a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a> | Copyright &copy; 2026 The Authors | <a href=\"https://iscc.io/privacy\">Privacy Policy</a> | <a href=\"https://iscc.io/imprint\">Imprint</a>"
+
+nav = [                                                               # site
+    { "Home" = "index.md" },
+    { "Components" = "components.md" },
+]
+
+# Options read by the theme's main.html
+[project.extra.iscc]
+tagline = "Zensical theme for ISCC documentation" # site: home page title suffix
+copy_page = true                                  # "Copy page" button; needs `zensical-iscc build`
+chat = false                                      # iscc.ai chat widget; only on origins iscc.ai allows
+
+[project.extra.analytics]
+provider = "plausible"
+domain = "example.iscc.codes" # site: the host name of site_url
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/iscc/zensical-iscc" # site
+
+# Fonts, palette, logo, favicon and the default features come from the theme.
+# Site-specific template overrides go into a `custom_dir` next to this setting.
+[project.theme]
+name = "zensical_iscc"
+
+[project.markdown_extensions]
+abbr = {}
+admonition = {}
+attr_list = {}
+def_list = {}
+footnotes = {}
+md_in_html = {}
+
+[project.markdown_extensions.toc]
+permalink = true
+
+[project.markdown_extensions.pymdownx]
+details = {}
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+
+[project.markdown_extensions.pymdownx.superfences]
+
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+combine_header_slug = true

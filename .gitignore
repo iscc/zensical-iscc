@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.egg-info/
+.venv/
+
+# Tooling caches and reports
+.pytest_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Docs build output
+site/
+.cache/
+
+# Editors
+.idea/
+.vscode/
+
+# Local agent context and plans (never committed)
+.claude/
+CLAUDE.local.md
+AGENTS.md
+cauldron/
+scratch/

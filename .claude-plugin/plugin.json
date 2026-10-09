@@ -1,0 +1,17 @@
+{
+  "name": "zensical-iscc",
+  "description": "Set up, migrate, upgrade and check the ISCC documentation theme for Zensical in ISCC projects",
+  "author": {
+    "name": "Titusz Pan",
+    "email": "tp@py7.de"
+  },
+  "homepage": "https://github.com/iscc/zensical-iscc",
+  "repository": "https://github.com/iscc/zensical-iscc",
+  "license": "Apache-2.0",
+  "keywords": [
+    "iscc",
+    "zensical",
+    "documentation",
+    "theme"
+  ]
+}

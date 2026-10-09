@@ -1,0 +1,112 @@
+[project]
+name = "zensical-iscc"
+version = "0.1.0"
+description = "ISCC theme for Zensical documentation sites"
+authors = [{ name = "Titusz Pan", email = "tp@py7.de" }]
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "zensical_iscc/theme/assets/iscc/fonts/*-OFL.txt", "zensical_iscc/theme/assets/iscc/vendor/glightbox/LICENSE.txt"]
+requires-python = ">=3.11"
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Documentation",
+    "Private :: Do Not Upload",
+]
+# The theme overrides Zensical templates, so each release pins the Zensical version it is tested with.
+dependencies = [
+    "zensical==0.0.69",
+]
+
+[project.urls]
+Homepage = "https://iscc.io"
+Repository = "https://github.com/iscc/zensical-iscc"
+
+[project.scripts]
+zensical-iscc = "zensical_iscc.cli:main"
+
+[project.entry-points."mkdocs.themes"]
+zensical_iscc = "zensical_iscc:THEME"
+
+[dependency-groups]
+dev = [
+    "mdformat>=1.0.0",
+    "mdformat-mkdocs[recommended]>=5.1",
+    "poethepoet>=0.48",
+    "prek>=0.5",
+    "pyright>=1.1.400",
+    "pytest>=9.0",
+    "pytest-cov>=7.0",
+    "ruff>=0.16",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["zensical_iscc"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "C90", # mccabe complexity
+    "UP",  # pyupgrade
+    "S",   # flake8-bandit (security)
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 8
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"] # assert is how pytest works
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "standard"
+include = ["zensical_iscc"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+branch = true
+source = ["zensical_iscc"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+skip_covered = true
+skip_empty = true
+
+[tool.poe.tasks]
+format = { sequence = [{ cmd = "ruff format ." }, { cmd = "ruff check --fix ." }, { cmd = "mdformat README.md CLAUDE.md skills" }], help = "Format and autofix code and docs" }
+lint = { sequence = [{ cmd = "ruff format --check ." }, { cmd = "ruff check ." }, { cmd = "mdformat --check README.md CLAUDE.md skills" }], help = "Check formatting and lint rules" }
+typecheck = { cmd = "pyright", help = "Static type check" }
+test = { cmd = "pytest --cov --cov-report=term-missing", help = "Run tests with 100% branch coverage gate" }
+audit = { cmd = "uv audit --frozen", help = "Check locked dependencies for known vulnerabilities" }
+demo-build = { cmd = "zensical-iscc build --config-file demo/zensical.toml", help = "Build the demo site into demo/site/" }
+demo-check = { cmd = "zensical-iscc check --strict --config-file demo/zensical.toml", help = "Check the built demo site" }
+demo = { sequence = ["demo-build", { cmd = "python -m http.server 45472 --bind 127.0.0.1 --directory demo/site" }], help = "Build the demo site and serve it on 127.0.0.1:45472" }
+all = { sequence = ["format", "typecheck", "test"], help = "Format, type check and test (local dev loop)" }
+ci = { sequence = ["lint", "typecheck", "test", "demo-build", "demo-check", "audit"], help = "All quality gates without modifying files" }

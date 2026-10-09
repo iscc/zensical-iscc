@@ -1,0 +1,15 @@
+{
+  "name": "zensical-iscc",
+  "description": "ISCC documentation theme for Zensical: agent skill for setting it up in ISCC projects",
+  "owner": {
+    "name": "ISCC Foundation",
+    "email": "tp@py7.de"
+  },
+  "plugins": [
+    {
+      "name": "zensical-iscc",
+      "source": "./",
+      "description": "Set up, migrate, upgrade and check the ISCC documentation theme for Zensical in ISCC projects"
+    }
+  ]
+}
