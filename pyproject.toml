@@ -19,7 +19,7 @@ classifiers = [
 ]
 # The theme overrides Zensical templates, so each release pins the Zensical version it is tested with.
 dependencies = [
-    "zensical==0.0.69",
+    "zensical==0.0.70",
 ]
 
 [project.urls]
