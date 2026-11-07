@@ -99,6 +99,10 @@ Two TOML traps:
 - Listing any Markdown extension replaces Zensical's default set, so the list must be complete. The demo's list is
     the baseline; add the project's extras to it.
 
+Every page gets a navigation icon: `icon: lucide/<name>` in its front matter, a name from
+<https://lucide.dev/icons/>. Keep the icons that pages already set and pick a fitting one for the others; section
+labels in `nav` take none.
+
 Coming from `mkdocs.yml`: write `zensical.toml` by hand (MkDocs keys become keys of `[project]`, plugin and
 extension options become tables, see <https://zensical.org/docs/setup/basics/>), then delete `mkdocs.yml`.
 
@@ -140,7 +144,7 @@ too, so a theme bump rebuilds the site.
     any warning you leave to the human.
 1. Serve the built `site/` directory (for example `python -m http.server <port> --directory site`) and look at the
     home page and one inner page in the light and the dark scheme: ISCC logo, Readex Pro headings, "Copy page"
-    button.
+    button, an icon in front of every page in the navigation.
 1. If the host of `site_url` is new to Plausible, tell the human to add it at stats.iscc.codes; until then
     visits are not counted.
 1. Search the repository for leftovers: `zensical_iscc/`, `gen_markdown_pages`, `mkdocs`, old logo file names.

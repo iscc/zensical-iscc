@@ -40,6 +40,13 @@ def test_demo_inner_page_title(demo_config):
     assert "<title>Components - ISCC Theme Demo</title>" in html
 
 
+def test_front_matter_icons_in_navigation(demo_config):
+    html = (build(demo_config) / "components" / "index.html").read_text(encoding="utf-8")
+    nav = html[html.index("md-nav--primary") : html.index("md-nav--secondary")]
+    assert 'class="lucide lucide-house"' in nav
+    assert 'class="lucide lucide-layout-grid"' in nav
+
+
 def test_demo_site_ships_theme_assets_but_no_python(demo_config):
     site = build(demo_config)
     assert (site / "assets" / "iscc" / "theme.css").is_file()

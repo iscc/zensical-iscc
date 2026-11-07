@@ -1,4 +1,5 @@
 ---
+icon: lucide/house
 description: Demo and reference site for the ISCC Zensical theme
 ---
 

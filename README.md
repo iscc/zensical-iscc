@@ -85,6 +85,19 @@ Generate ISCC codes from your own code.
 
 The demo's [components page](demo/docs/components.md) shows all of them.
 
+## Navigation icons
+
+Every page carries an icon in front of its navigation entry, set in its front matter:
+
+```markdown
+---
+icon: lucide/rocket
+---
+```
+
+Use names from the [Lucide](https://lucide.dev/icons/) set. Zensical inlines the icon as SVG, so it adds no
+request. Section labels in `nav` carry no icon; only pages do.
+
 ## For coding agents
 
 [`skills/iscc-docs-theme/SKILL.md`](skills/iscc-docs-theme/SKILL.md) is the procedure for setting up, migrating,

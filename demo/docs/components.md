@@ -1,4 +1,5 @@
 ---
+icon: lucide/layout-grid
 description: The page elements ISCC documentation uses, styled by the ISCC theme
 ---
 
