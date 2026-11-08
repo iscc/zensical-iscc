@@ -1,6 +1,6 @@
 # zensical-iscc
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/iscc/zensical-iscc)
+[![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-blue)](https://deepwiki.com/iscc/zensical-iscc)
 
 The ISCC theme for [Zensical](https://zensical.org/) documentation sites. The package contains:
 
