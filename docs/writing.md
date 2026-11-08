@@ -1,6 +1,6 @@
 ---
 icon: lucide/pen-line
-description: Rules for the front matter, icons, images and agent page of an ISCC site
+description: Rules for the front matter, icons, images, diagrams and agent page of an ISCC site
 ---
 
 # Writing pages
@@ -66,6 +66,11 @@ The [For Coding Agents](for-coding-agents.md) page of this site is an example.
 The head of each page links to its Markdown copy with `<link rel="alternate" type="text/markdown">`, so an agent
 that gets the HTML can also find the source.
 
+Write links between pages as usual, to the `.md` file relative to the page. The build rewrites them in each copy
+to point at the other page's copy, `../configuration/index.md` for example, and links to images and other files
+at those files. In `llms-full.txt` they are relative to the site root. Links inside code stay as written, and
+`zensical-iscc check` reports a link in a copy that points at nothing.
+
 ## Page components
 
 The theme styles a lead paragraph, buttons for calls to action, audience cards and ISCC-UNIT labels.
@@ -79,7 +84,28 @@ Pages load nothing from other domains, except Plausible and, if chat is on, iscc
     link to the copies.
 - To show an image in a lightbox, put it in `<a class="glightbox" href="...">`. The theme loads its own copy of
     GLightbox, and only on pages with a lightbox.
-- Do not use Mermaid diagrams. The Zensical bundle loads Mermaid from unpkg.com, and `zensical-iscc check` rejects
-    pages with a Mermaid diagram. Use an SVG file.
+- For a diagram, write a [Mermaid](#diagrams) block or use an SVG file.
 
 [Command line](command-line.md#third-party-requests) lists the requests that the check cannot see.
+
+## Diagrams
+
+Write a diagram as a fenced `mermaid` block:
+
+````markdown
+```mermaid
+graph LR
+  A[Media file] --> B{{ISCC-CODE}}
+```
+````
+
+The `custom_fences` entry of the reference configuration turns these blocks into diagrams:
+
+```toml
+[project.markdown_extensions.pymdownx.superfences]
+custom_fences = [{ name = "mermaid", class = "mermaid" }]
+```
+
+The theme loads its own copy of Mermaid, and only on pages with a diagram. The diagrams take the theme colors in both
+color schemes. [Components](components.md#diagrams) shows a flowchart and a sequence diagram. The Markdown copy of
+the page keeps the block, so agents read the diagram source.

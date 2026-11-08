@@ -102,7 +102,74 @@ def test_build_publishes_markdown_pages(docs_config):
     copies = [markdown.output_path(site, Path(p)).read_text(encoding="utf-8") for p in nav]
     assert copies[0].startswith("# ISCC Theme\n")
     assert (site / "components" / "index.md").read_text(encoding="utf-8").startswith("# Components\n")
-    assert (site / "llms-full.txt").read_text(encoding="utf-8") == "\n\n".join(copies)
+    full = (site / "llms-full.txt").read_text(encoding="utf-8")
+    # The home page lives at the root like llms-full.txt; the other pages' links are rewritten for the root.
+    assert full.startswith(copies[0])
+    assert full.count("\n\n# ") >= len(copies) - 1
+    assert "](../writing/index.md#diagrams)" in copies[nav.index("command-line.md")]
+    assert "](writing/index.md#diagrams)" in full
+
+
+def test_rebase_link_points_pages_at_their_markdown_copies():
+    files = frozenset({"index.md", "guide/setup.md", "guide/index.md", "howto/configuration.md", "img/a b.png"})
+    setup = {"source_dir": "guide", "copy_dir": "guide/setup", "files": files}
+    assert markdown.rebase_link("../howto/configuration.md", **setup) == "../../howto/configuration/index.md"
+    assert markdown.rebase_link("index.md#intro", **setup) == "../index.md#intro"
+    assert markdown.rebase_link("../img/a%20b.png", **setup) == "../../img/a%20b.png"
+    home = {"source_dir": ".", "copy_dir": ".", "files": files}
+    assert markdown.rebase_link("guide/setup.md", **home) == "guide/setup/index.md"
+    assert markdown.rebase_link("./img/a b.png", **home) == "img/a%20b.png"
+    root = {"source_dir": "guide", "copy_dir": ".", "files": files}
+    assert markdown.rebase_link("setup.md#steps", **root) == "guide/setup/index.md#steps"
+
+
+def test_rebase_link_leaves_other_links_as_written():
+    setup = {"source_dir": "guide", "copy_dir": "guide/setup", "files": frozenset({"guide/setup.md"})}
+    for target in ("missing.md", "../../outside.md", "#anchor", "/abs/page/", "https://iscc.codes/", "mailto:x@y.z"):
+        assert markdown.rebase_link(target, **setup) == target
+
+
+def test_map_links_covers_links_images_and_references_but_not_code():
+    text = (
+        '[Page](a.md) and ![Logo](b.png "Title") and [Angle](<c.md>)\n'
+        "[ref]: d.md\n"
+        "[^1]: e.md is a footnote\n"
+        "Inline `[Code](f.md)` and ``[Double](g.md)``\n"
+        "```md\n[Fenced](h.md)\n```\n"
+        "~~~\n[Tilde](i.md)\n~~~\n"
+        "[`code` in the label](j.md)\n"
+    )
+    mapped = markdown.map_links(text, str.upper)
+    assert '[Page](A.MD) and ![Logo](B.PNG "Title") and [Angle](<C.MD>)\n[ref]: D.MD\n' in mapped
+    for kept in ("[^1]: e.md", "`[Code](f.md)`", "``[Double](g.md)``", "[Fenced](h.md)", "[Tilde](i.md)"):
+        assert kept in mapped
+    assert "[`code` in the label](J.MD)" in mapped
+
+
+def test_local_links_skip_anchors_absolute_and_external_links():
+    text = "[a](a.md#x) [b](#b) [c](/c/) [d](https://d.org/) [e](../e.png) `[f](f.md)`"
+    assert markdown.local_links(text) == ["a.md#x", "../e.png"]
+
+
+def test_build_rewrites_links_of_nested_pages(docs_config):
+    docs = docs_config.parent / "docs"
+    (docs / "guide" / "img").mkdir(parents=True)
+    (docs / "guide" / "img" / "chart.png").write_bytes(b"png")
+    (docs / "guide" / "setup.md").write_text(
+        "# Setup\n\nSee [components](../components.md#cards), [the guide](index.md) and ![Chart](img/chart.png).\n",
+        encoding="utf-8",
+    )
+    (docs / "guide" / "index.md").write_text("# Guide\n\nStart with [setup](setup.md).\n", encoding="utf-8")
+    site = build(docs_config)
+    setup = (site / "guide" / "setup" / "index.md").read_text(encoding="utf-8")
+    assert "[components](../../components/index.md#cards)" in setup
+    assert "[the guide](../index.md)" in setup
+    assert "![Chart](../img/chart.png)" in setup
+    assert (site / "guide" / "setup" / "../img/chart.png").resolve().is_file()
+    assert "[setup](setup/index.md)" in (site / "guide" / "index.md").read_text(encoding="utf-8")
+    full = (site / "llms-full.txt").read_text(encoding="utf-8")
+    assert "[components](components/index.md#cards)" in full
+    assert "![Chart](guide/img/chart.png)" in full
 
 
 def test_build_writes_llms_index_with_the_agent_page_first(docs_config):

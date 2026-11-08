@@ -173,10 +173,20 @@ def test_resource_urls():
 def test_page_findings():
     html = '<script src="https://stats.iscc.codes/js/plausible.js"></script><img src="https://img.shields.io/x.svg">'
     assert check.page_findings("index.html", html) == [("error", "index.html loads https://img.shields.io/x.svg")]
-    mermaid = '<pre class="mermaid"><code>graph LR</code></pre>'
-    assert messages(check.page_findings("flow/index.html", mermaid)) == [
-        ("error", "flow/index.html has a Mermaid diagram, which the Zensical bundle loads from unpkg.com")
+
+
+def test_page_findings_for_mermaid():
+    diagram = '<pre class="mermaid"><code>graph LR</code></pre>'
+    script = '<script src="../assets/iscc/vendor/mermaid/mermaid.min.js"></script>'
+    assert messages(check.page_findings("flow/index.html", diagram)) == [
+        ("error", "flow/index.html has a Mermaid diagram without the theme's copy of Mermaid")
     ]
+    assert check.page_findings("flow/index.html", script + diagram) == []
+    # Any pre.mermaid counts, as the bundle renders each of them
+    other = '<PRE id="flow" class="wide mermaid"><code>graph LR</code></PRE>'
+    assert len(check.page_findings("flow/index.html", other)) == 1
+    # Escaped markup in code examples and other elements are no diagrams
+    assert check.page_findings("x.html", '<code>&lt;pre class="mermaid"&gt;</code><div class="mermaid"></div>') == []
 
 
 def test_stylesheet_findings():
@@ -201,6 +211,21 @@ def test_markdown_findings(tmp_path):
     assert len(check.markdown_findings(tmp_path, sources)) == 1
     (tmp_path / "llms.txt").write_text("# Home\n", encoding="utf-8")
     assert check.markdown_findings(tmp_path, sources) == []
+
+
+def test_markdown_link_findings(tmp_path):
+    sources = [Path("index.md"), Path("guide.md")]
+    assert check.markdown_link_findings(tmp_path, sources) == []
+    (tmp_path / "guide").mkdir()
+    (tmp_path / "guide" / "index.md").write_text("[Home](../index.md#top) `[Code](x.md)`\n", encoding="utf-8")
+    (tmp_path / "index.md").write_text(
+        "[Guide](guide/index.md) [Old](guide.md) [Web](https://x.org/)\n", encoding="utf-8"
+    )
+    (tmp_path / "llms-full.txt").write_text("[Guide](guide/) [Gone](gone/index.md#x)\n", encoding="utf-8")
+    assert check.markdown_link_findings(tmp_path, sources) == [
+        ("warning", "index.md links to guide.md, which the site lacks"),
+        ("warning", "llms-full.txt links to gone/index.md#x, which the site lacks"),
+    ]
 
 
 def test_agent_page_findings():
@@ -242,9 +267,17 @@ def test_check_finds_foreign_images_in_pages(docs_config):
 def test_check_finds_missing_markdown_pages(docs_config):
     site = build(docs_config)
     (site / "components" / "index.md").unlink()
-    assert messages(check.check(docs_config)) == [
-        ("error", "Markdown pages are missing from the site; build with `zensical-iscc build`")
-    ]
+    findings = check.check(docs_config)
+    assert messages(findings)[0] == (
+        "error",
+        "Markdown pages are missing from the site; build with `zensical-iscc build`",
+    )
+    # The copies that link to the missing page now point at nothing.
+    assert (
+        "warning",
+        "design/index.md links to ../components/index.md#calls-to-action, which the site lacks",
+    ) in findings
+    assert {level for level, _ in findings[1:]} == {"warning"}
 
 
 def test_check_finds_vendored_theme(docs_config):

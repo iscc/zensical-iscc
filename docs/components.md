@@ -145,6 +145,25 @@ print(code["iscc"])
     echo "tabbed code"
     ```
 
+## Diagrams
+
+```mermaid
+graph LR
+  A[Media file] --> B[Content-Code]
+  A --> C[Data-Code]
+  A --> D[Instance-Code]
+  B & C & D --> E{{ISCC-CODE}}
+```
+
+```mermaid
+sequenceDiagram
+  participant App
+  participant Hub as ISCC Hub
+  App->>Hub: Declare ISCC-CODE
+  Hub-->>App: ISCC-ID
+  Note over App,Hub: Signed with the app's key
+```
+
 ## Tables
 
 | Unit     | Header    | Bits |

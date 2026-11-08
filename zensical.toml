@@ -94,7 +94,9 @@ anchor_linenums = true
 line_spans = "__span"
 pygments_lang_class = true
 
+# Fenced `mermaid` blocks become diagrams. The theme serves Mermaid on the pages that have one.
 [project.markdown_extensions.pymdownx.superfences]
+custom_fences = [{ name = "mermaid", class = "mermaid" }]
 
 [project.markdown_extensions.pymdownx.tabbed]
 alternate_style = true

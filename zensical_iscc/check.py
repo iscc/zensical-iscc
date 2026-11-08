@@ -8,7 +8,7 @@ Each finding is a `(level, message)` pair with level `error` or `warning`.
 
 import re
 from pathlib import Path  # noqa: F401 (used in type comments)
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 
 from zensical_iscc import markdown, project, project_logo
 
@@ -19,7 +19,8 @@ LINKED_RESOURCES = frozenset({"stylesheet", "icon", "preload", "modulepreload", 
 RESOURCE_TAG_RE = re.compile(r"<(script|img|iframe|source|audio|video|embed|link)\b[^>]*>", re.IGNORECASE)
 ATTR_RE = re.compile(r"""([\w:-]+)\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)""")
 CSS_URL_RE = re.compile(r"""(?:url\(\s*|@import\s+)["']?((?:https?:)?//[^"')\s;]+)""", re.IGNORECASE)
-MERMAID_RE = re.compile(r"""class=["'][^"']*\bmermaid\b""")
+MERMAID_RE = re.compile(r"""<pre\b[^>]*\bclass=["'][^"']*\bmermaid\b""", re.IGNORECASE)
+MERMAID_SCRIPT = "assets/iscc/vendor/mermaid/mermaid.min.js"
 
 
 def error(message):
@@ -58,7 +59,9 @@ def theme_findings(theme):
     if theme.get("font", False) is not False:
         findings.append(error("remove `font` from [project.theme]: the theme serves its own fonts"))
     if "navigation.instant" in theme.get("features", []):
-        findings.append(error("remove the `navigation.instant` feature: it makes lightbox pages load from unpkg.com"))
+        findings.append(
+            error("remove the `navigation.instant` feature: it makes lightbox and Mermaid pages load from unpkg.com")
+        )
     for key in ("logo", "favicon", "palette"):
         if key in theme:
             findings.append(
@@ -201,10 +204,12 @@ def resource_urls(html):
 
 def page_findings(name, html):
     # type: (str, str) -> list[tuple[str, str]]
-    """Check one built HTML page for resources from other origins and for Mermaid diagrams."""
-    findings = [error(f"{name} loads {url}") for url in resource_urls(html) if is_foreign(url)]
-    if MERMAID_RE.search(html):
-        findings.append(error(f"{name} has a Mermaid diagram, which the Zensical bundle loads from unpkg.com"))
+    """Check one built HTML page for resources from other origins and for Mermaid without the theme's copy."""
+    urls = resource_urls(html)
+    findings = [error(f"{name} loads {url}") for url in urls if is_foreign(url)]
+    if MERMAID_RE.search(html) and not any(url.endswith(MERMAID_SCRIPT) for url in urls):
+        reason = "the Zensical bundle loads it from unpkg.com"
+        findings.append(error(f"{name} has a Mermaid diagram without the theme's copy of Mermaid: {reason}"))
     return findings
 
 
@@ -235,6 +240,25 @@ def markdown_findings(built_dir, sources):
     return []
 
 
+def broken_links(path):
+    # type: (Path) -> list[str]
+    """Return the relative links of a Markdown file that resolve to nothing beside it."""
+    targets = markdown.local_links(path.read_text(encoding="utf-8"))
+    return [target for target in targets if not (path.parent / unquote(target.partition("#")[0])).exists()]
+
+
+def markdown_link_findings(built_dir, sources):
+    # type: (Path, list[Path]) -> list[tuple[str, str]]
+    """Flag relative links in the Markdown copies and `llms-full.txt` that point at nothing in the site."""
+    copies = [markdown.output_path(built_dir, p) for p in sources] + [built_dir / "llms-full.txt"]
+    return [
+        warning(f"{copy.relative_to(built_dir).as_posix()} links to {target}, which the site lacks")
+        for copy in copies
+        if copy.is_file()
+        for target in broken_links(copy)
+    ]
+
+
 def check(config_path):
     # type: (Path) -> list[tuple[str, str]]
     """Return all findings for the site configured by `config_path`."""
@@ -250,4 +274,5 @@ def check(config_path):
     if not built_dir.is_dir():
         return [*findings, warning("the site is not built; run `zensical-iscc build` to check its pages")]
     findings += site_findings(built_dir) + markdown_findings(built_dir, sources)
+    findings += markdown_link_findings(built_dir, sources)
     return findings + project_logo_findings(config, built_dir)

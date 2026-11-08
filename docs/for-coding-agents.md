@@ -18,7 +18,7 @@ both. Full Markdown of this site: [`llms-full.txt`](https://theme.iscc.codes/llm
 | `zensical_iscc/__init__.py`                  | `THEME_DIR`; `THEME`, a `SimpleNamespace` whose `__file__` lies in `theme/`                |
 | `zensical_iscc/cli.py`                       | `main(argv)`, `run_build`, `run_markdown`, `run_project_logo`, `run_check`                 |
 | `zensical_iscc/project.py`                   | `load_project`, `docs_dir`, `site_dir`, `custom_dir`, `resolve_dir`                        |
-| `zensical_iscc/markdown.py`                  | Markdown copies, `llms-full.txt`, `llms.txt`; `AGENT_PAGE`, `agent_page`, `flatten_nav`    |
+| `zensical_iscc/markdown.py`                  | Markdown copies, `llms-full.txt`, `llms.txt`; `AGENT_PAGE`, `agent_page`, `flatten_nav`, `rebase_links`, `local_links` |
 | `zensical_iscc/check.py`                     | `check(config_path)` and one `*_findings` function per rule                                |
 | `zensical_iscc/project_logo.py`              | `compose`, `write`, `project_name`, `is_valid`; port of the ISCC project logo construction |
 | `zensical_iscc/theme/`                       | The theme directory Zensical loads; templates, partials, `assets/iscc/`; no Python         |
@@ -71,6 +71,7 @@ project_logo → zensical_iscc.THEME_DIR, fontTools
 | Link preview image                   | `og_image = "assets/..."`                                       |
 | Count analytics under another host   | `[project.extra.analytics] domain`                              |
 | Site-specific template               | `[project.theme] custom_dir`, file extends `main.html`          |
+| Diagrams                             | Fenced `mermaid` blocks; `custom_fences = [{ name = "mermaid", class = "mermaid" }]` in `[project.markdown_extensions.pymdownx.superfences]` |
 
 ### Where a theme change goes (*theme*)
 
@@ -81,6 +82,7 @@ project_logo → zensical_iscc.THEME_DIR, fontTools
 | Header markup                            | `theme/partials/header.html` (Zensical copy + one include)   |
 | Footer content, shared ISCC links, social links | `theme/partials/copyright.html`                              |
 | Default features, palette                | `theme/mkdocs_theme.yml`                                     |
+| A library the bundle loads from unpkg.com | Copy in `theme/assets/iscc/vendor/`, loaded in the `libs` block of `main.html` only on pages that need it |
 | New configuration rule                   | `check.py` new `*_findings` + call in `check()`              |
 | New build output                         | `cli.run_build` chain + `check` presence finding             |
 
@@ -98,7 +100,11 @@ project_logo → zensical_iscc.THEME_DIR, fontTools
 | Listing Markdown extensions replaces Zensical's defaults                   | The list must be complete                                   |
 | `for-coding-agents.md` exists and is in `nav`, last                        | `check.agent_page_findings` warns; fails under `--strict`   |
 | Directory URLs: page `a/b.md` → `site/a/b/index.md`                        | `markdown.output_path`; the `<link rel="alternate">` relies on it |
+| Copies rewrite relative links that resolve to a docs file; code and other links stay | `markdown.rebase_link`; `check.markdown_link_findings` warns on links that resolve to nothing |
 | `theme.css` overrides match Zensical's selector specificity                | Lower specificity loses silently (see mistakes)             |
+| `--md-mermaid-*` colors are set on `:root > *`, Zensical's selector        | Its sequence diagram variables derive from them there       |
+| `main.html` loads `vendor/mermaid/mermaid.min.js` iff the content has `<pre class="mermaid` | The bundle renders `pre.mermaid`; `check.page_findings` flags a diagram without `check.MERMAID_SCRIPT` |
+| Vendored Mermaid major equals the `mermaid@` major in the Zensical bundle  | The bundle drives that API; `test_vendored_mermaid_matches_the_bundle` |
 | Content width capped at 1385px; root font size held at 125%                | Layout and type scale                                       |
 | Templates run on MiniJinja                                                 | Attribute access on undefined raises; guard with `or {}`    |
 
@@ -110,7 +116,7 @@ project_logo → zensical_iscc.THEME_DIR, fontTools
 | `cli.run_markdown`                | `site/**/index.md`, `site/llms-full.txt`, `site/llms.txt`                       | 1 if `site/` is missing     |
 | `cli.run_project_logo`            | `site/assets/iscc/project-logo.svg` (white-coral, 1 h = 24px)                   | 1 for an invalid name; 0 and a note without a name |
 | `cli.run_check`                   | Nothing; prints findings and a count                                            | 1 on errors, or on warnings with `--strict` |
-| `markdown.write_pages`            | One `index.md` per page, front matter stripped; both llms files                 | None                        |
+| `markdown.write_pages`            | One `index.md` per page, front matter stripped, links rebased; both llms files  | None                        |
 | `project_logo.write`              | Creates `assets/iscc/` if needed                                                | Path written                |
 | `scripts/sync_changelog.py`       | `docs/changelog.md`                                                             | 1 when it changed the file  |
 | `project_logo.signature_geometry`, `face` | Cached (`functools.cache`) per process                                          | -                           |
@@ -147,7 +153,10 @@ the setting in `docs/configuration.md` and `skills/iscc-docs-theme/SKILL.md`.
 
 1. Bump `zensical==` in `pyproject.toml`; `uv lock`.
 1. `uv run poe docs`; compare both schemes at phone, desktop and wide widths with the previous version.
-1. `uv run poe ci`; `test_header_is_zensicals_plus_the_projects_menu` fails if Zensical's header changed.
+1. `uv run poe ci`; `test_header_is_zensicals_plus_the_projects_menu` fails if Zensical's header changed,
+    `test_vendored_mermaid_matches_the_bundle` if the bundle loads another Mermaid major. Then copy `dist/mermaid.min.js`
+    and `LICENSE` of that major's latest npm release that is at least two weeks old, and check the diagrams on
+    `components.md` in both schemes.
 1. Add a `CHANGELOG.md` entry naming the pinned version.
 
 ### Release (*theme*)
@@ -167,6 +176,7 @@ Only when the human asks: rename "Unreleased" in `CHANGELOG.md`, set `version` i
 | `theme.css` or templates              | Look at theme.iscc.codes in both schemes; `docs/design.md` if a design rule changes    |
 | `project_logo.py`                     | Fixtures must still match; refresh them from the ISCC brand assets if the project logo design changed |
 | Brand assets                          | Copy from the ISCC brand assets; never edit                                            |
+| A file in `vendor/`                   | Version in `CLAUDE.md` and `docs/development.md`; `LICENSE.txt` next to it             |
 | `CHANGELOG.md`                        | Commit the `docs/changelog.md` the hook writes                                         |
 | Agent page convention                 | `markdown.AGENT_PAGE`, `check.agent_page_findings`, `docs/writing.md`, `SKILL.md`      |
 | Public API, CLI or configuration      | This page: run `/zensical-iscc:docs-for-agents update`                                 |
@@ -179,8 +189,8 @@ NEVER build a deployable site with `zensical build`. ALWAYS use `zensical-iscc b
 ---
 
 NEVER set `font`, `logo`, `favicon` or `palette` in `[project.theme]`, and NEVER add `navigation.instant` to
-`features`. The theme serves its own fonts and marks; instant navigation makes lightbox pages fetch GLightbox from
-unpkg.com.
+`features`. The theme serves its own fonts and marks; instant navigation makes lightbox and Mermaid pages fetch
+GLightbox or Mermaid from unpkg.com.
 
 ---
 
@@ -199,7 +209,30 @@ NEVER hot-link images or badges (`https://img.shields.io/...`). ALWAYS store a c
 
 ---
 
-NEVER use fenced `mermaid` blocks. The bundle would load Mermaid from unpkg.com; `check` rejects the page.
+NEVER write a diagram as raw HTML or override the `libs` block without `{{ super() }}`. ALWAYS use a fenced
+`mermaid` block; only then does `main.html` load the theme's Mermaid, and `check` rejects a diagram without it.
+
+````markdown
+<!-- WRONG: the bundle ignores a div; a raw <pre id="x" class="mermaid"> makes it fetch Mermaid from unpkg.com -->
+<div class="mermaid">graph LR; A --> B</div>
+<!-- RIGHT -->
+```mermaid
+graph LR
+  A --> B
+```
+````
+
+---
+
+NEVER restyle a derived Zensical CSS variable by overriding its source on a descendant. A custom property that
+refers to another resolves where it is declared; set the source on Zensical's selector.
+
+```css
+/* WRONG: the sequence diagram colors keep the accent, resolved on :root > * */
+.md-typeset .mermaid { --md-mermaid-node-fg-color: var(--md-default-fg-color); }
+/* RIGHT */
+:root > * { --md-mermaid-node-fg-color: var(--md-default-fg-color); }
+```
 
 ---
 

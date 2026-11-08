@@ -60,5 +60,5 @@ upgrades and releases. [`CHANGELOG.md`](CHANGELOG.md) lists the releases.
 ## License
 
 The code, templates and stylesheets are licensed under the Apache License 2.0. The bundled fonts are licensed under
-the SIL Open Font License (notices in `fonts/`) and GLightbox under the MIT License. The ISCC logos and symbols are
-brand assets of the ISCC Foundation for use on ISCC sites.
+the SIL Open Font License (notices in `fonts/`), GLightbox and Mermaid under the MIT License. The ISCC logos and
+symbols are brand assets of the ISCC Foundation for use on ISCC sites.

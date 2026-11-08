@@ -3,7 +3,7 @@
 
   Extends the Zensical base template with brand stylesheets, social metadata,
   a link to each page's Markdown copy for agents, optional client-side
-  redirects, a self-hosted GLightbox and the theme's page
+  redirects, self-hosted GLightbox and Mermaid, and the theme's page
   widgets (copy page, chat). Every request stays on the site's own origin
   except Plausible analytics and, with chat enabled, iscc.ai. Site-specific
   behaviour is driven by `[project.extra.iscc]`:
@@ -22,6 +22,8 @@
 {% set description = meta.description | d(config.site_description, true) %}
 {% set is_home = page.is_homepage or page.url == "" %}
 {% set lightbox = 'class="glightbox"' in page.content %}
+{#- The bundle renders `pre.mermaid`; in code examples the `<` is escaped. -#}
+{% set mermaid = '<pre class="mermaid' in page.content %}
 {#- The front matter title wins over the navigation label, which Zensical
     puts first in page.title. -#}
 {% set page_title = meta.title or (page.title | striptags if page.title else "") %}
@@ -46,14 +48,17 @@
 {% endblock %}
 
 {#-
-  Zensical's bundle fetches GLightbox from unpkg.com unless the global is
-  already defined, so the theme loads its own copy before the bundle runs,
-  on the pages whose content carries lightbox anchors.
+  Zensical's bundle fetches GLightbox and Mermaid from unpkg.com unless their
+  globals are already defined, so the theme loads its own copies before the
+  bundle runs, on the pages whose content carries lightbox anchors or diagrams.
 -#}
 {% block libs %}
   {{ super() }}
   {% if lightbox %}
   <script src="{{ 'assets/iscc/vendor/glightbox/glightbox.min.js' | url }}"></script>
+  {% endif %}
+  {% if mermaid %}
+  <script src="{{ 'assets/iscc/vendor/mermaid/mermaid.min.js' | url }}"></script>
   {% endif %}
 {% endblock %}
 

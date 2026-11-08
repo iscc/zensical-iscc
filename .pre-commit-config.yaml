@@ -1,6 +1,7 @@
 # Git hooks, run by prek (https://github.com/j178/prek): `uv run prek install` once, then on every commit.
 # `uv run prek run --all-files` checks the whole tree. CI runs the same hooks.
-# Brand assets and GLightbox stay byte-identical to their sources (ISCC brand assets, GLightbox release).
+# Brand assets and vendored libraries stay byte-identical to their sources (ISCC brand assets, GLightbox and
+# Mermaid releases).
 exclude: ^zensical_iscc/theme/assets/iscc/((tokens|fonts|logos|vendor)/|.*\.(svg|png|ico)$)
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

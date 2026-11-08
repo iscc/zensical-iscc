@@ -36,6 +36,7 @@ or to the Zensical version, look at this site in both color schemes.
 | `zensical_iscc/theme/assets/iscc/theme.css`              | Maps the tokens to the Zensical variables and styles the components              |
 | `zensical_iscc/theme/assets/iscc/tokens/`, `fonts/`, `logos/` | Copies of the ISCC brand assets: tokens, Readex Pro and JetBrains Mono, logos    |
 | `zensical_iscc/theme/assets/iscc/vendor/glightbox/`      | GLightbox 3.3.1, not changed                                                     |
+| `zensical_iscc/theme/assets/iscc/vendor/mermaid/`        | `dist/mermaid.min.js` of Mermaid 12.2.0, not changed. Its major version follows the one the Zensical bundle loads |
 | `zensical_iscc/theme/assets/iscc/copypage.js`            | "Copy page", "View as Markdown", "Edit on GitHub"                                |
 | `zensical_iscc/theme/assets/iscc/copilot.js`, `copilot.css` | The loader and styles of the iscc.ai chat widget                                 |
 | `zensical_iscc/cli.py`, `markdown.py`, `check.py`, `project.py` | The `zensical-iscc` command                                                      |
@@ -60,6 +61,7 @@ Some files are copies. Update them from their source. Do not edit them here.
 | Tokens, fonts, logos, favicons, `grain.png`, the app tile, the plugin icon | ISCC sources that are not public                                          |
 | `tests/fixtures/project-logos/`               | The ISCC brand assets. Port changes of the project logo construction to `project_logo.py` |
 | `skills/docs-for-agents/SKILL.md`             | `plugins/docs-for-agents/` in [titusz/skills](https://github.com/titusz/skills) |
+| `vendor/glightbox/`, `vendor/mermaid/`        | The `glightbox` and `mermaid` packages on npm, with their `LICENSE`        |
 | `docs/changelog.md`                           | `CHANGELOG.md`, written by the `changelog` git hook                       |
 
 ## Upgrade Zensical
@@ -72,6 +74,9 @@ Some files are copies. Update them from their source. Do not edit them here.
 1. Release.
 
 A test compares `partials/header.html` with the Zensical header. If Zensical changes its header, the test fails.
+Another test compares the major version of `vendor/mermaid/` with the Mermaid version that the Zensical bundle
+loads. If it fails, copy `dist/mermaid.min.js` of the latest release of that major version that is at least two
+weeks old, and look at the diagrams on [Components](components.md#diagrams) in both color schemes.
 
 ## Release
 
@@ -92,5 +97,5 @@ Pages on each push that changes it.
 ## License
 
 The code, templates and stylesheets are licensed under the Apache License 2.0. The bundled fonts are licensed under
-the SIL Open Font License and GLightbox under the MIT License. The ISCC logos and symbols are brand assets of the
-ISCC Foundation for use on ISCC sites.
+the SIL Open Font License, GLightbox and Mermaid under the MIT License. The ISCC logos and symbols are brand assets
+of the ISCC Foundation for use on ISCC sites.

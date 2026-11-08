@@ -58,8 +58,6 @@ Ask in one message, with your recommendation for each:
 - The header's "Projects" menu, which every ISCC site should have: propose the list, in order, from the survey.
     Recommend the site itself, the specification at iscc.codes and the sites the project works with, each with a
     one-line description you draft for this site's readers (under 60 characters) for the human to edit.
-- Mermaid diagrams: the theme does not serve Mermaid yet, and the Zensical bundle would load it from unpkg.com. Do
-    not keep them without a decision.
 - Anything in the survey that looks site-specific but would also suit other ISCC sites: it may belong in the theme.
 
 Do not ask about settings that the reference `zensical.toml` already settles.
@@ -195,5 +193,6 @@ the plain text.
 - Pages load nothing from other origins except Plausible (`stats.iscc.codes`) and, with chat on, `iscc.ai`.
     `zensical-iscc check` enforces this for the built HTML and CSS. `docs/command-line.md` lists the requests it
     cannot see.
-- No Mermaid until the theme serves it.
-- No `navigation.instant`: lightbox pages would then load GLightbox from unpkg.com.
+- Mermaid diagrams are fenced `mermaid` blocks with the reference `custom_fences` entry; the theme serves Mermaid.
+    Keep them; turn diagrams in raw HTML (`<div class="mermaid">`) or for the `mermaid2` plugin into such blocks.
+- No `navigation.instant`: lightbox and Mermaid pages would then load from unpkg.com.

@@ -45,7 +45,8 @@ uv run poe docs          # build the docs site and serve it on 127.0.0.1:45472
     include; when Zensical's changes, a test fails until the copy is refreshed.
 - Brand assets under `theme/assets/iscc/` (`tokens/`, `fonts/`, `logos/`, favicons, `grain.png`) are copies of
     the ISCC brand assets; refresh them from their sources (paths in the untracked `CLAUDE.local.md`), never edit
-    them here. `vendor/` holds GLightbox 3.3.1 unchanged.
+    them here. `vendor/` holds GLightbox 3.3.1 and Mermaid 12.2.0 unchanged;
+    Mermaid's major version follows the `mermaid@` URL in the Zensical bundle.
 - Keep the theme's promise of no third-party requests; `zensical_iscc/check.py` enforces it for sites.
 - Every page option, check and command change is reflected in `docs/`, `zensical.toml`,
     `skills/iscc-docs-theme/SKILL.md` and `CHANGELOG.md` under "Unreleased". After changing the public API, CLI or

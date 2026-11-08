@@ -177,6 +177,35 @@ def test_lightbox_pages_load_the_vendored_glightbox(docs_config):
     assert "glightbox" not in (site / "index.html").read_text(encoding="utf-8")
 
 
+def test_vendored_mermaid_matches_the_bundle():
+    # The bundle drives the Mermaid API of the major version it would load from unpkg.com
+    scripts = Path(zensical_ui.__file__).parent / "templates" / "assets" / "javascripts"
+    (bundle,) = scripts.glob("bundle.*.min.js")
+    wanted = re.search(r"unpkg\.com/mermaid@(\d+)/dist/mermaid\.min\.js", bundle.read_text(encoding="utf-8"))
+    vendored = (THEME_DIR / "assets" / "iscc" / "vendor" / "mermaid" / "mermaid.min.js").read_text(encoding="utf-8")
+    shipped = re.search(r'\{version:"(\d+)\.\d+\.\d+"\}', vendored)
+    assert wanted and shipped
+    assert wanted.group(1) == shipped.group(1)
+
+
+def test_mermaid_pages_load_the_vendored_mermaid(docs_config):
+    docs = docs_config.parent / "docs"
+    (docs / "flow.md").write_text("# Flow\n\n```mermaid\ngraph LR\n  A --> B\n```\n", encoding="utf-8")
+    (docs / "example.md").write_text(
+        '# Example\n\n`<pre class="mermaid">`\n\n```html\n<pre class="mermaid">graph LR</pre>\n```\n', encoding="utf-8"
+    )
+    site = build(docs_config)
+    flow = (site / "flow" / "index.html").read_text(encoding="utf-8")
+    assert '<pre class="mermaid"><code>graph LR' in flow
+    assert '<script src="../assets/iscc/vendor/mermaid/mermaid.min.js"></script>' in flow
+    assert flow.index("vendor/mermaid/mermaid.min.js") < flow.index("assets/javascripts/bundle.")
+    assert (site / "assets" / "iscc" / "vendor" / "mermaid" / "mermaid.min.js").is_file()
+    # Markup in code examples is no diagram
+    assert "vendor/mermaid" not in (site / "example" / "index.html").read_text(encoding="utf-8")
+    assert "```mermaid\ngraph LR" in (site / "flow" / "index.md").read_text(encoding="utf-8")
+    assert cli.main(["check", "--config-file", str(docs_config)]) == 0
+
+
 def test_chat_on_and_copy_page_off(docs_config):
     edit_config(docs_config, "copy_page = true", "copy_page = false")
     edit_config(docs_config, "chat = false", "chat = true")

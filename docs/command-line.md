@@ -22,8 +22,8 @@ Zensical has no plugins for steps after the build, so use `zensical-iscc build` 
 | Output                         | From                                                       | Read by                                 |
 | ------------------------------ | ---------------------------------------------------------- | --------------------------------------- |
 | `site/**/index.html`           | Zensical                                                   | Browsers                                |
-| `site/<page>/index.md`         | The Markdown of each page, without front matter            | "Copy page", "View as Markdown", agents |
-| `site/llms-full.txt`           | All pages, in navigation order                             | Language models that read a full site   |
+| `site/<page>/index.md`         | The Markdown of each page, without front matter, links rewritten for its location | "Copy page", "View as Markdown", agents |
+| `site/llms-full.txt`           | All pages, in navigation order, links rewritten for the site root | Language models that read a full site   |
 | `site/llms.txt`                | The title, link and description of each page, agent page first | Agents that look for a start page       |
 | `site/assets/iscc/project-logo.svg` | The project name and the ISCC project logo construction rules | The header                              |
 
@@ -39,7 +39,7 @@ site. It cannot see the requests that the Zensical bundle makes in the browser.
 | ---------------------------------------------------------- | -------------------------------------------------------------------- |
 | `set name = "zensical_iscc" in [project.theme]`            | Set the theme                                                        |
 | `remove font from [project.theme]`                         | Remove it. The theme supplies its fonts                              |
-| `remove the navigation.instant feature`                    | Remove it. It makes lightbox pages load GLightbox from unpkg.com     |
+| `remove the navigation.instant feature`                    | Remove it. It makes lightbox and Mermaid pages load from unpkg.com   |
 | `custom_dir … holds a copy of the ISCC theme`              | Delete the copy. Add the package as a dependency                     |
 | `main.html replaces the theme's main.html`                 | Delete it. Page templates can extend `main.html`                     |
 | `project … use lowercase words and hyphens, without iscc-` | Correct `project` in `[project.extra.iscc]`                          |
@@ -47,7 +47,7 @@ site. It cannot see the requests that the Zensical bundle makes in the browser.
 | `write related projects as [[project.extra.iscc.related]] tables` | Use double brackets                                                  |
 | `extra_css / extra_javascript loads …`                     | Put a copy in the docs directory                                     |
 | `<page> loads <url>`                                       | Put the image, script or stylesheet in `docs/`                       |
-| `<page> has a Mermaid diagram`                             | Replace the diagram with an SVG file                                 |
+| `<page> has a Mermaid diagram without the theme's copy of Mermaid` | Write the diagram as a [`mermaid` block](writing.md#diagrams). Templates that extend `main.html` keep `{{ super() }}` in the `libs` block |
 | `Markdown pages are missing from the site`                 | Build with `zensical-iscc build`, not with `zensical build`          |
 | `the project logo is missing from the site`                | Build with `zensical-iscc build`                                     |
 
@@ -65,21 +65,20 @@ site. It cannot see the requests that the Zensical bundle makes in the browser.
 | `list for-coding-agents.md in nav`                         | Add `{ "For Coding Agents" = "for-coding-agents.md" }` as the last entry |
 | `[project.extra.analytics] replaces Plausible`             | All ISCC sites use Plausible                                         |
 | `analytics domain … differs from the site_url host`        | Remove `domain`, unless the site must count visits under a different host |
+| `<copy> links to <target>, which the site lacks`           | Correct the link in the page. A link to a deleted page or file shows up here |
 | `the site is not built`                                    | Build the site. Until then, the check examines only the configuration |
 
 ## Third-party requests
 
 Pages request nothing from third parties, except Plausible analytics and, if chat is on, iscc.ai. The theme
-supplies the fonts and GLightbox. Without the theme copy, the Zensical bundle loads GLightbox from unpkg.com, and
-privacy tools such as Privacy Badger flag unpkg.com as a tracker.
+supplies the fonts, GLightbox and Mermaid. Without the theme copies, the Zensical bundle loads GLightbox and Mermaid
+from unpkg.com, and privacy tools such as Privacy Badger flag unpkg.com as a tracker.
 
 The check cannot see these requests:
 
-- For a page with a Mermaid diagram, the bundle loads Mermaid from unpkg.com, so the check rejects these pages. To
-    allow them, the theme must supply its own copy of Mermaid, as it does for GLightbox.
-- The bundle loads GLightbox on each page that has lightbox links in its content. With `navigation.instant`, the
-    bundle can open a lightbox page without a full page load. Then it loads GLightbox from unpkg.com, so the check
-    rejects this feature.
+- The bundle loads GLightbox on each page that has lightbox links in its content, and Mermaid on each page with a
+    diagram. With `navigation.instant`, the bundle can open such a page without a full page load. Then it loads
+    GLightbox or Mermaid from unpkg.com, so the check rejects this feature.
 - The chat widget loads the fonts that iscc.ai declares in its `public/theme.json`.
 - If `repo_url` is set, the bundle gets the stars, forks and latest release of the repository from
     `api.github.com`. ISCC sites are on GitHub Pages, so GitHub is not a third party for them. This request stays.

@@ -142,5 +142,5 @@ A page template in `custom_dir` can extend the theme with `{% extends "main.html
 
 A list of Markdown extensions replaces the Zensical default set, so the list must be complete. Start from the list
 in the reference configuration: `abbr`, `admonition`, `attr_list`, `def_list`, `footnotes`, `md_in_html`, `toc`
-with permalinks, and the pymdownx extensions `details`, `highlight`, `superfences` and `tabbed`. Add the extensions
-of your project to it.
+with permalinks, and the pymdownx extensions `details`, `highlight`, `superfences` with the `mermaid` fence for
+[diagrams](writing.md#diagrams) and `tabbed`. Add the extensions of your project to it.

@@ -2,6 +2,20 @@
 
 To upgrade a site, change the `tag` in its `[tool.uv.sources]` and run `uv lock --upgrade-package zensical-iscc`.
 
+## Unreleased
+
+- **Mermaid diagrams.** Fenced `mermaid` blocks become diagrams. The theme serves its own copy of Mermaid 12.2.0,
+    only on pages with a diagram, so no page loads it from unpkg.com. Sequence diagrams now take the theme colors
+    like flowcharts. `zensical-iscc check` accepts these pages and reports a diagram only when the page lacks the
+    theme's copy.
+- **Links in the Markdown copies.** Links between pages work in `<page>/index.md` and `llms-full.txt`: the build
+    rewrites each relative link to a page or file for the copy's location, so "Copy page", "View as Markdown" and
+    agents following links no longer reach missing files. `zensical-iscc check` warns about a link in a copy that
+    points at nothing.
+
+Upgrade: add `custom_fences = [{ name = "mermaid", class = "mermaid" }]` to
+`[project.markdown_extensions.pymdownx.superfences]`, as in the reference `zensical.toml`.
+
 ## 0.3.0 - 2026-11-08
 
 Pins **Zensical 0.1.0**.
