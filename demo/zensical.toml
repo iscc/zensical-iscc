@@ -28,6 +28,34 @@ copy_page = true                                  # "Copy page" button; needs `z
 chat = false                                      # iscc.ai chat widget; only on origins iscc.ai allows
 # product = "monitor"                             # site: header wordmark name; default: repo_name without iscc-
 
+# Related ISCC sites for the header's "Projects" menu, in display order. Every site should list
+# the sites its readers move between, the specification and itself; the entry linking to this
+# site's site_url is marked as the current site. Without entries there is no menu.
+[[project.extra.iscc.related]]                                        # site
+name = "ISCC Theme Demo"
+link = "https://example.iscc.codes/"
+description = "Demo and reference site for the ISCC Zensical theme"
+
+[[project.extra.iscc.related]]                                        # site
+name = "ISCC Specification"
+link = "https://iscc.codes/"
+description = "The International Standard Content Code, ISO 24138"
+
+[[project.extra.iscc.related]]                                        # site
+name = "ISCC Search"
+link = "https://search.iscc.codes/"
+description = "Similarity search engine for ISCC codes"
+
+[[project.extra.iscc.related]]                                        # site
+name = "ISCC Web"
+link = "https://web.iscc.codes/"
+description = "Service that generates ISCC codes for media files"
+
+[[project.extra.iscc.related]]                                        # site
+name = "ISCC Monitor"
+link = "https://monitor.iscc.codes/"
+description = "Verifies and mirrors the transparency logs of ISCC hubs"
+
 [[project.extra.social]]
 icon = "fontawesome/brands/github"
 link = "https://github.com/iscc/zensical-iscc" # site

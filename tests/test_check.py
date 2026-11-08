@@ -92,6 +92,51 @@ def test_analytics_findings():
     assert findings == [("warning", "analytics domain iscc.codes differs from the site_url host core.iscc.codes")]
 
 
+def related(*entries):
+    """Return a configuration whose [project.extra.iscc] lists the given related projects."""
+    return {"extra": {"iscc": {"related": list(entries)}}}
+
+
+def test_related_findings_for_no_menu_and_complete_entries():
+    assert check.related_findings({}) == []
+    search = {"name": "ISCC Search", "link": "https://search.iscc.codes/", "description": "Similarity search"}
+    assert check.related_findings(related(search, {**search, "name": "ISCC Web"})) == []
+
+
+def test_related_findings_for_incomplete_entries():
+    findings = check.related_findings(related({"name": "ISCC Web"}, {"description": "No name"}))
+    assert findings == [
+        ("error", "related project ISCC Web in [project.extra.iscc] lacks link, description"),
+        ("error", "related project 2 in [project.extra.iscc] lacks name, link"),
+    ]
+
+
+def test_related_findings_for_insecure_and_relative_links():
+    entry = {"name": "ISCC Web", "description": "Generator"}
+    findings = check.related_findings(related({**entry, "link": "http://web.iscc.codes/"}, {**entry, "link": "../"}))
+    assert findings == [
+        ("error", "related project ISCC Web links to http://web.iscc.codes/; use an https:// URL"),
+        ("error", "related project ISCC Web links to ../; use an https:// URL"),
+    ]
+
+
+def test_related_findings_for_misshapen_tables():
+    assert messages(check.related_findings({"extra": {"iscc": {"related": {"name": "X"}}}})) == [
+        ("error", "write related projects as [[project.extra.iscc.related]] tables, with double brackets")
+    ]
+    assert check.related_findings(related("search")) == [
+        ("error", "related project 1 in [project.extra.iscc] is not a table with name, link, description")
+    ]
+
+
+def test_check_reports_related_projects_from_the_configuration(demo_config):
+    edit_config(demo_config, 'link = "https://iscc.codes/"', 'link = "http://iscc.codes/"')
+    assert check.check(demo_config) == [
+        ("error", "related project ISCC Specification links to http://iscc.codes/; use an https:// URL"),
+        ("warning", "the site is not built; run `zensical-iscc build` to check its pages"),
+    ]
+
+
 def test_extra_asset_findings():
     config = {
         "extra_css": ["stylesheets/custom.css", "https://fonts.googleapis.com/css2?family=Inter"],

@@ -36,7 +36,8 @@ uv run poe demo          # build the demo site and serve it on 127.0.0.1:45472
 ## Rules
 
 - `pyproject.toml` pins one Zensical version. Upgrading it means: bump the pin, build the demo, compare both colour
-    schemes in a browser, run the tests, release.
+    schemes in a browser, run the tests, release. `theme/partials/header.html` is Zensical's header plus one
+    include; when Zensical's changes, a test fails until the copy is refreshed.
 - Brand assets under `theme/assets/iscc/` (`tokens/`, `fonts/`, `logos/`, favicons, `grain.png`) are copies;
     refresh them from `../iscc-brand`, `../iscc-io/public/` and `../iscc-web/frontend/assets/`, never edit them here. `vendor/` holds GLightbox 3.3.1 unchanged.
 - Keep the theme's promise of no third-party requests; `zensical_iscc/check.py` enforces it for sites.

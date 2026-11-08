@@ -1,8 +1,11 @@
 # zensical-iscc
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/iscc/zensical-iscc)
+
 ISCC theme for [Zensical](https://zensical.org/) documentation sites. It applies the ISCC identity (Edition 01,
 September 2026) on top of Zensical's modern Material variant and carries the widgets the ISCC sites share: the "Copy
-page" split button, the iscc.ai chat widget and Plausible analytics. The `zensical-iscc` command builds a site with
+page" split button, a "Projects" menu that links related ISCC sites, the iscc.ai chat widget and Plausible
+analytics. The `zensical-iscc` command builds a site with
 the Markdown copies that "Copy page" reads and checks that the site uses the theme as intended.
 
 ## Using the theme in a site
@@ -28,6 +31,12 @@ copy_page = true                                # default true
 chat = true                                     # default false
 # og_image = "assets/iscc/social-share.png"       # default
 # product = "monitor"                             # default: repo_name without "iscc/" and "iscc-"
+
+# Related ISCC sites for the header's "Projects" menu, recommended; see "Related projects menu"
+[[project.extra.iscc.related]]
+name = "ISCC Search"
+link = "https://search.iscc.codes/"
+description = "Similarity search engine for ISCC codes"
 
 # Plausible analytics are on by default; this table is only needed to change them
 # [project.extra.analytics]
@@ -66,6 +75,34 @@ uv run zensical-iscc check --strict    # configuration and built site; non-zero 
 read `index.md` next to each rendered page, and `llms-full.txt` at the site root holds all pages in navigation
 order. The chat widget mounts only on origins that the iscc.ai token endpoint allows, so it stays silent on
 localhost.
+
+## Related projects menu
+
+ISCC is a family of sites that work together: the specification, the hub, search, the web generator, the monitor
+and more. Readers move between them, so every site should list its relatives in the header's "Projects" menu: the
+sites it talks to, the specification at iscc.codes, and the site itself.
+
+```toml
+[[project.extra.iscc.related]]
+name = "ISCC Monitor"                                                   # this site; marked as the current one
+link = "https://monitor.iscc.codes/"
+description = "Verifies and mirrors the transparency logs of ISCC hubs"
+
+[[project.extra.iscc.related]]
+name = "ISCC Specification"
+link = "https://iscc.codes/"
+description = "The International Standard Content Code, ISO 24138"
+```
+
+- Each table adds one entry, in order, with its `name`, an https `link` and a one-line `description`. Write the
+    description for this site's readers: what the other site does for them, in under 60 characters.
+- An entry whose link is the site's own `site_url` carries the coral current-site marker. Listing the site itself
+    keeps the menu the same on every site of a group and shows readers where they are.
+- A site without entries has no menu.
+- The menu is a grid icon, labelled "Projects" from 960px up. It opens on hover, focus or tap and needs no
+    JavaScript; on phones it spans the screen below the header bar.
+- `zensical-iscc check` reports entries that lack a field, links that are not https and `[project.extra.iscc.related]`
+    written with single brackets.
 
 ## Page components
 
@@ -143,6 +180,8 @@ request stays.
 | `zensical_iscc/theme/mkdocs_theme.yml`                               | Theme defaults: fonts off (self-hosted), favicon, features, palette                                                |
 | `zensical_iscc/theme/main.html`                                      | Brand stylesheets, social metadata, redirects, widget configuration                                                |
 | `zensical_iscc/theme/partials/logo.html`                             | Primary signature in both colourways, switched by scheme                                                           |
+| `zensical_iscc/theme/partials/header.html`                           | Zensical's header verbatim plus the related projects menu; a test compares it with Zensical's copy                 |
+| `zensical_iscc/theme/partials/projects.html`                         | Related projects menu, from `[[project.extra.iscc.related]]`                                                       |
 | `zensical_iscc/theme/partials/integrations/analytics.html`           | Makes Plausible the default analytics provider                                                                     |
 | `zensical_iscc/theme/partials/integrations/analytics/plausible.html` | Plausible analytics provider                                                                                       |
 | `zensical_iscc/theme/assets/iscc/tokens/iscc.css`                    | Identity tokens, verbatim from the brand kit (`build/tokens/iscc.css`)                                             |
@@ -185,8 +224,8 @@ port the change to `wordmark.py`.
     phones the signature stands alone.
 - Blue is the link colour. Coral marks the chevron of the primary button, the current-page marker in navigation,
     text selection and the logo circle. Text does not sit on coral; the iscc.ai chat button is the one exception.
-- Type: body copy in Readex Pro Regular at 16px on every screen width, as the theme holds Zensical's root size at
-    125%; the lead paragraph in Light at 1.2em; running text stops at about 75 characters per line, while tables,
+- Type: body copy in Readex Pro Light at 16px on every screen width, as the theme holds Zensical's root size at
+    125%; the lead paragraph in the same weight at 1.2em; running text stops at about 75 characters per line, while tables,
     code and cards use the full column.
 - Buttons follow the brand kit's button system: JetBrains Mono capitals, 46px high. The primary button is a pointed
     near-black block with a white label and a coral chevron, white with a near-black label in the dark scheme; the

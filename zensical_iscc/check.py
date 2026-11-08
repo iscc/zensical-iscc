@@ -14,6 +14,7 @@ from zensical_iscc import markdown, project, wordmark
 
 THEME_NAME = "zensical_iscc"
 ALLOWED_HOSTS = frozenset({"stats.iscc.codes", "iscc.ai"})
+RELATED_KEYS = ("name", "link", "description")
 LINKED_RESOURCES = frozenset({"stylesheet", "icon", "preload", "modulepreload", "prefetch", "manifest"})
 RESOURCE_TAG_RE = re.compile(r"<(script|img|iframe|source|audio|video|embed|link)\b[^>]*>", re.IGNORECASE)
 ATTR_RE = re.compile(r"""([\w:-]+)\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)""")
@@ -101,6 +102,31 @@ def product_findings(config):
     if not wordmark.is_valid(name):
         return [error(f"product {name!r} in [project.extra.iscc]: use lowercase words and hyphens, without iscc-")]
     return []
+
+
+def related_entry_findings(index, entry):
+    # type: (int, object) -> list[tuple[str, str]]
+    """Check one entry of the header's related projects menu."""
+    if not isinstance(entry, dict):
+        return [error(f"related project {index} in [project.extra.iscc] is not a table with name, link, description")]
+    label = entry.get("name") or str(index)
+    findings = []
+    missing = [key for key in RELATED_KEYS if not entry.get(key)]
+    if missing:
+        findings.append(error(f"related project {label} in [project.extra.iscc] lacks {', '.join(missing)}"))
+    link = entry.get("link")
+    if link and not str(link).startswith("https://"):
+        findings.append(error(f"related project {label} links to {link}; use an https:// URL"))
+    return findings
+
+
+def related_findings(config):
+    # type: (dict) -> list[tuple[str, str]]
+    """Check the related projects that the header's Projects menu lists."""
+    related = config.get("extra", {}).get("iscc", {}).get("related", [])
+    if not isinstance(related, list):
+        return [error("write related projects as [[project.extra.iscc.related]] tables, with double brackets")]
+    return [finding for index, entry in enumerate(related, 1) for finding in related_entry_findings(index, entry)]
 
 
 def wordmark_findings(config, built_dir):
@@ -198,7 +224,7 @@ def check(config_path):
     override_dir = project.custom_dir(config_path, config)
     findings = theme_findings(config.get("theme", {}))
     findings += custom_dir_findings(override_dir)
-    findings += metadata_findings(config) + product_findings(config)
+    findings += metadata_findings(config) + product_findings(config) + related_findings(config)
     findings += analytics_findings(config) + extra_asset_findings(config)
     built_dir = project.site_dir(config_path, config)
     if not built_dir.is_dir():

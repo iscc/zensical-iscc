@@ -182,12 +182,12 @@ html {
   font-size: 125%;
 }
 
-/* Body copy is Readex Pro Regular at 16px, as the brand kit sets small and
- * body text; Light is kept for the lead paragraph, the one generous size.
- * Headings, emphasis and the current page use Medium or Semibold. */
+/* Body copy is Readex Pro Light at 16px, a step lighter than the brand kit's
+ * Regular for a quieter page; the lead paragraph shares the weight and stands
+ * apart by size. Headings, emphasis and the current page use Medium or Semibold. */
 .md-typeset {
   font-size: 0.8rem;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 1.6;
   letter-spacing: 0;
 }
@@ -802,6 +802,100 @@ html {
 
   .md-header__source .md-source__repository {
     max-width: 9rem;
+  }
+}
+
+/* Related projects menu: the grid icon, with a "Projects" label from 960px
+ * up, opens Zensical's dropdown, widened to rows of name and one-line
+ * description. The current site carries the navigation's coral marker. */
+.md-header__button.iscc-projects__button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font: inherit;
+  font-size: 0.75rem;
+}
+
+.iscc-projects__label {
+  display: none;
+}
+
+@media screen and (min-width: 60em) {
+  .iscc-projects__label {
+    display: inline;
+  }
+}
+
+.iscc-projects .md-select__inner {
+  width: max-content;
+  max-width: min(20rem, calc(100vw - 1.6rem));
+}
+
+.iscc-projects .md-select__list {
+  padding: 0.3rem 0;
+  white-space: normal;
+}
+
+.iscc-projects .md-select__item {
+  line-height: 1.35;
+}
+
+.md-select__link.iscc-projects__link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.45rem 0.8rem;
+}
+
+.iscc-projects__name {
+  font-weight: 500;
+}
+
+.iscc-projects__description {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.7rem;
+}
+
+.iscc-projects__link[aria-current] {
+  box-shadow: inset 2px 0 0 var(--iscc-coral);
+}
+
+/* On phones the button sits too far right for a panel hung from it, so the
+ * panel spans the screen below the bar, inside the page gutters */
+@media screen and (max-width: 44.9375em) {
+  .iscc-projects .md-select {
+    position: static;
+  }
+
+  .iscc-projects .md-select .md-select__inner {
+    position: fixed;
+    top: var(--iscc-header-height);
+    left: 0.8rem;
+    right: 0.8rem;
+    width: auto;
+    max-width: none;
+    transform: translate3d(0, 0.3rem, 0);
+  }
+
+  .iscc-projects .md-select:hover .md-select__inner,
+  .iscc-projects .md-select:focus-within .md-select__inner {
+    transform: none;
+  }
+
+  .iscc-projects .md-select__inner::after {
+    display: none;
+  }
+}
+
+/* At Zensical's spacing the logo and its controls need 332px, and 376px with
+ * the Projects menu. Below 376px the controls drop their outer margins, which
+ * lie outside their tap areas, and the hidden site name drops its margins, so
+ * either header fits a 320px screen. */
+@media screen and (max-width: 23.4375em) {
+  .md-header__button,
+  .md-header__title {
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 

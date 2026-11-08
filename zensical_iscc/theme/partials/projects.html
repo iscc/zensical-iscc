@@ -1,0 +1,34 @@
+{#-
+  Related projects menu in the header: a "Projects" button that opens a list
+  of other ISCC documentation sites, each with its name and a one-line
+  description. It renders only when the site lists entries under
+  `[[project.extra.iscc.related]]` (name, link, description). An entry whose
+  link is the site's own `site_url` carries the coral current-site marker.
+  Built on Zensical's `md-select` dropdown, which opens on hover and focus
+  without JavaScript.
+-#}
+{% set iscc = config.extra.iscc or {} %}
+{% if iscc.related %}
+  {% set here = config.site_url | d("", true) | trim("/") %}
+  <div class="md-header__option iscc-projects">
+    <div class="md-select">
+      <button class="md-header__button md-icon iscc-projects__button" aria-label="Related projects">
+        {% include ".icons/lucide/layout-grid.svg" %}
+        <span class="iscc-projects__label" aria-hidden="true">Projects</span>
+      </button>
+      <div class="md-select__inner">
+        <ul class="md-select__list">
+          {% for item in iscc.related %}
+            {% set link = item.link | d("", true) %}
+            <li class="md-select__item">
+              <a href="{{ link }}" class="md-select__link iscc-projects__link" {% if here and link | trim("/") == here %}aria-current="true"{% endif %}>
+                <span class="iscc-projects__name">{{ item.name }}</span>
+                <span class="iscc-projects__description">{{ item.description }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endif %}

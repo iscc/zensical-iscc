@@ -1,5 +1,9 @@
 """The installed theme as Zensical sees it: discovery, built pages, options and site overrides."""
 
+import re
+from pathlib import Path
+
+import zensical_ui
 from conftest import build, edit_config
 from zensical import config as zensical_config
 
@@ -45,6 +49,48 @@ def test_front_matter_icons_in_navigation(demo_config):
     nav = html[html.index("md-nav--primary") : html.index("md-nav--secondary")]
     assert 'class="lucide lucide-house"' in nav
     assert 'class="lucide lucide-layout-grid"' in nav
+
+
+def template_body(path):
+    """Return a template without its leading comment block."""
+    return re.sub(r"\A\{#-.*?-#\}\n", "", path.read_text(encoding="utf-8"), count=1, flags=re.DOTALL)
+
+
+def test_header_is_zensicals_plus_the_projects_menu():
+    upstream = template_body(Path(zensical_ui.__file__).parent / "templates" / "partials" / "header.html")
+    ours = template_body(THEME_DIR / "partials" / "header.html")
+    include = '    {% include "partials/projects.html" %}\n'
+    assert ours.count(include) == 1
+    assert ours.replace(include, "") == upstream
+
+
+def test_demo_header_lists_related_projects(demo_config):
+    html = (build(demo_config) / "components" / "index.html").read_text(encoding="utf-8")
+    menu = html[html.index('class="md-header__option iscc-projects"') : html.index('data-md-component="palette"')]
+    assert 'aria-label="Related projects"' in menu
+    assert ">Projects</span>" in menu
+    assert menu.count('class="md-select__link iscc-projects__link"') == 5
+    assert '<span class="iscc-projects__name">ISCC Search</span>' in menu
+    assert '<span class="iscc-projects__description">Similarity search engine for ISCC codes</span>' in menu
+    assert menu.count("aria-current") == 1
+    assert (
+        '<a href="https://example.iscc.codes/" class="md-select__link iscc-projects__link" aria-current="true">' in menu
+    )
+
+
+def test_no_projects_menu_without_related_projects(demo_config):
+    text = demo_config.read_text(encoding="utf-8")
+    text = re.sub(r"\[\[project\.extra\.iscc\.related\]\][^\[]*", "", text)
+    demo_config.write_text(text, encoding="utf-8")
+    html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
+    assert "iscc-projects" not in html
+
+
+def test_no_current_site_marker_without_site_url(demo_config):
+    edit_config(demo_config, 'site_url = "https://example.iscc.codes/"', "")
+    html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
+    assert html.count('class="md-select__link iscc-projects__link"') == 5
+    assert "aria-current" not in html
 
 
 def test_demo_site_ships_theme_assets_but_no_python(demo_config):
@@ -150,3 +196,18 @@ def test_page_components_are_styled_by_the_theme(demo_config):
     assert 'class="iscc-lead"' in html
     assert 'class="iscc-btn iscc-btn--primary"' in html
     assert html.count('class="iscc-card"') == 3
+
+
+def test_projects_menu_spans_the_phone_screen():
+    css = (THEME_DIR / "assets" / "iscc" / "theme.css").read_text(encoding="utf-8")
+    assert ".iscc-projects__link[aria-current] {\n  box-shadow: inset 2px 0 0 var(--iscc-coral);" in css
+    phone = css[css.index("@media screen and (max-width: 44.9375em) {\n  .iscc-projects .md-select {") :]
+    assert "position: fixed;\n    top: var(--iscc-header-height);\n    left: 0.8rem;\n    right: 0.8rem;" in phone
+
+
+def test_narrow_header_fits_a_320px_screen():
+    # Logo, menu button, scheme toggle and search need 332px with Zensical's margins, 376px with Projects.
+    css = (THEME_DIR / "assets" / "iscc" / "theme.css").read_text(encoding="utf-8")
+    narrow = css[css.index("@media screen and (max-width: 23.4375em) {") :]
+    rule = ".md-header__button,\n  .md-header__title {\n    margin-left: 0;\n    margin-right: 0;"
+    assert narrow.index(rule) < narrow.index("}")

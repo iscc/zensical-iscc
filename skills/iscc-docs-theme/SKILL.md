@@ -40,6 +40,8 @@ Read before changing anything and note what you find:
 - **Mermaid**: `custom_fences` with `mermaid`, or fenced `mermaid` blocks in the docs.
 - **Plugins**: mkdocstrings, glightbox, redirects and others; keep the ones Zensical supports.
 - **Deployment**: the docs workflow, GitHub Pages, `docs/CNAME`, and the published URL.
+- **Related ISCC sites**: links to other ISCC sites in `nav`, the README or the home page, and the services the
+    project calls or serves. They are the candidates for the "Projects" menu.
 
 ## 2. Ask the human about what only they know
 
@@ -47,6 +49,9 @@ Ask in one message, with your recommendation for each:
 
 - `tagline`, the suffix of the home page title, if the old overrides do not show one.
 - `chat = true` only if the human confirms that iscc.ai serves the site's domain.
+- The header's "Projects" menu, which every ISCC site should have: propose the list, in order, from the survey.
+    Recommend the site itself, the specification at iscc.codes and the sites the project works with, each with a
+    one-line description you draft for this site's readers (under 60 characters) for the human to edit.
 - Mermaid diagrams: the theme does not serve Mermaid yet, and the Zensical bundle would load it from unpkg.com. Do
     not keep them without a decision.
 - Anything in the survey that looks site-specific but would also suit other ISCC sites: it may belong in the theme.
@@ -80,18 +85,19 @@ Then run `uv lock` and `uv sync`. Without uv:
 Start from `demo/zensical.toml`: replace every value marked `# site`, then carry over the project's own `nav`,
 Markdown extensions and plugins. The rules that matter:
 
-| Setting                              | Rule                                                                             |
-| ------------------------------------ | -------------------------------------------------------------------------------- |
-| `[project.theme] name`               | `"zensical_iscc"`                                                                |
-| `[project.theme] custom_dir`         | Only for site-specific overrides; never a copy of the theme, never `main.html`   |
-| `font`, `logo`, `favicon`, `palette` | Leave unset; the theme provides them                                             |
-| `features`                           | Leave unset to get the theme defaults; never add `navigation.instant`            |
-| `site_url`                           | The published URL with a trailing slash                                          |
-| `edit_uri`                           | `"edit/main/<docs dir>/"`; the default points at a `master` branch               |
-| `[project.extra.iscc]`               | `tagline`, `copy_page = true`, `chat = false` unless confirmed                   |
-| `product` in `[project.extra.iscc]`  | Leave unset when `repo_name` minus `iscc-` is the product name; else set it      |
-| `[project.extra.analytics]`          | Leave unset: Plausible counts the host of `site_url`; set `domain` if it differs |
-| `copyright`                          | The ISCC footer from the demo, with the project's years                          |
+| Setting                              | Rule                                                                               |
+| ------------------------------------ | ---------------------------------------------------------------------------------- |
+| `[project.theme] name`               | `"zensical_iscc"`                                                                  |
+| `[project.theme] custom_dir`         | Only for site-specific overrides; never a copy of the theme, never `main.html`     |
+| `font`, `logo`, `favicon`, `palette` | Leave unset; the theme provides them                                               |
+| `features`                           | Leave unset to get the theme defaults; never add `navigation.instant`              |
+| `site_url`                           | The published URL with a trailing slash                                            |
+| `edit_uri`                           | `"edit/main/<docs dir>/"`; the default points at a `master` branch                 |
+| `[project.extra.iscc]`               | `tagline`, `copy_page = true`, `chat = false` unless confirmed                     |
+| `product` in `[project.extra.iscc]`  | Leave unset when `repo_name` minus `iscc-` is the product name; else set it        |
+| `[[project.extra.iscc.related]]`     | One table per related site, this one included: `name`, https `link`, `description` |
+| `[project.extra.analytics]`          | Leave unset: Plausible counts the host of `site_url`; set `domain` if it differs   |
+| `copyright`                          | The ISCC footer from the demo, with the project's years                            |
 
 Two TOML traps:
 
@@ -146,7 +152,8 @@ too, so a theme bump rebuilds the site.
 1. Serve the built `site/` directory (for example `python -m http.server <port> --directory site`) and look at the
     home page and one inner page in the light and the dark scheme: the product wordmark lockup in the header
     (for example "ISCC | monitor."), Readex Pro headings, "Copy page" button, an icon in front of every page in
-    the navigation. `zensical serve` shows the plain ISCC logo instead of the lockup; only the built site has it.
+    the navigation, the "Projects" menu with this site marked. `zensical serve` shows the plain ISCC
+    logo instead of the lockup; only the built site has it.
 1. If the host of `site_url` is new to Plausible, tell the human to add it at stats.iscc.codes; until then
     visits are not counted.
 1. Search the repository for leftovers: `zensical_iscc/`, `gen_markdown_pages`, `mkdocs`, old logo file names.
@@ -154,7 +161,8 @@ too, so a theme bump rebuilds the site.
 ## Upgrading the theme
 
 Change the `tag` in `[tool.uv.sources]`, run `uv lock --upgrade-package zensical-iscc`, then build and check. The
-release notes on GitHub say what changed and which Zensical version the release pins.
+release notes on GitHub say what changed and which Zensical version the release pins. If the site has no
+`[[project.extra.iscc.related]]` entries yet, propose the "Projects" menu as in step 2.
 
 ## Rules
 
