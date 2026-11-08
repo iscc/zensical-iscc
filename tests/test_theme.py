@@ -45,8 +45,11 @@ def test_footer_links_the_iscc_pages_and_shows_the_copyright(docs_config):
     for link in ("foundation", "privacy", "imprint"):
         assert f'href="https://iscc.io/{link}"' in footer
     assert 'href="https://creativecommons.org/licenses/by/4.0/"' in footer
-    assert "../assets/iscc/logos/iscc-icon-white-coral.svg" in footer
+    assert "../assets/iscc/logos/iscc-logo-white.svg" in footer
     assert "<span>Copyright © 2026 The Authors</span>" in footer
+    # One row: logo and copyright, then the ISCC links, the divider and the social links
+    order = ("iscc-logo-white.svg", "Copyright ©", 'class="iscc-footer__links"', "iscc-footer__divider", "md-social")
+    assert [footer.index(part) for part in order] == sorted(footer.index(part) for part in order)
     assert "Made with" in footer
     social = footer[footer.index('class="md-social"') :]
     assert social.index("https://github.com/iscc/zensical-iscc") < social.index("linkedin.com/company/iscc-foundation")
@@ -225,7 +228,7 @@ def test_root_size_holds_and_primary_button_is_a_near_black_block():
 def test_footer_links_outweigh_zensicals_footer_link_rule():
     # Zensical colours them with `a:not(:focus, :hover)`; a plain `a` selector loses to it.
     css = (THEME_DIR / "assets" / "iscc" / "theme.css").read_text(encoding="utf-8")
-    assert "html .md-footer-meta.md-typeset a:not(:focus, :hover) {\n  color: var(--md-footer-fg-color);" in css
+    assert "html .md-footer-meta.md-typeset a:not(:focus, :hover) {\n  color: var(--md-footer-fg-color--light);" in css
 
 
 def test_header_overrides_spare_the_drawer_and_reach_the_magnifier():
