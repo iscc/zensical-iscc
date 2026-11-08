@@ -1,6 +1,6 @@
 {
   "name": "zensical-iscc",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Set up, migrate, upgrade and check the ISCC documentation theme for Zensical in ISCC projects, and write their For Coding Agents page",
   "author": {
     "name": "Titusz Pan",

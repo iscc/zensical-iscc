@@ -27,26 +27,26 @@ or to the Zensical version, look at this site in both color schemes.
 | -------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | `zensical_iscc/theme/mkdocs_theme.yml`                   | Theme defaults: fonts off, favicon, features, palette                            |
 | `zensical_iscc/theme/main.html`                          | Brand stylesheets, social metadata, Markdown link, redirects, widget settings    |
-| `zensical_iscc/theme/partials/logo.html`                 | The project logo and the ISCC logo in both color versions                    |
+| `zensical_iscc/theme/partials/logo.html`                 | The project logo and the ISCC logo in both color versions                        |
 | `zensical_iscc/theme/partials/header.html`               | The Zensical header plus the "Projects" menu. A test compares it with the Zensical header |
 | `zensical_iscc/theme/partials/projects.html`             | The "Projects" menu, from `[[project.extra.iscc.related]]`                       |
-| `zensical_iscc/theme/partials/copyright.html`            | The footer content: ISCC symbol, shared ISCC links, `copyright` text, social links |
+| `zensical_iscc/theme/partials/copyright.html`            | The footer content: ISCC logo, `copyright` text, shared ISCC links, social links |
 | `zensical_iscc/theme/partials/social.html`               | Empty. `copyright.html` shows the social links, also without `extra.social`      |
 | `zensical_iscc/theme/partials/integrations/analytics*`   | Plausible as the default analytics provider                                      |
 | `zensical_iscc/theme/assets/iscc/theme.css`              | Maps the tokens to the Zensical variables and styles the components              |
-| `zensical_iscc/theme/assets/iscc/tokens/`, `fonts/`, `logos/` | Copies of the ISCC brand assets: tokens, Readex Pro and JetBrains Mono, logos |
+| `zensical_iscc/theme/assets/iscc/tokens/`, `fonts/`, `logos/` | Copies of the ISCC brand assets: tokens, Readex Pro and JetBrains Mono, logos    |
 | `zensical_iscc/theme/assets/iscc/vendor/glightbox/`      | GLightbox 3.3.1, not changed                                                     |
 | `zensical_iscc/theme/assets/iscc/copypage.js`            | "Copy page", "View as Markdown", "Edit on GitHub"                                |
-| `zensical_iscc/theme/assets/iscc/copilot.js`, `copilot.css` | The loader and styles of the iscc.ai chat widget                              |
-| `zensical_iscc/cli.py`, `markdown.py`, `check.py`, `project.py` | The `zensical-iscc` command                                               |
-| `zensical_iscc/project_logo.py`                              | Draws the project logo                                                       |
+| `zensical_iscc/theme/assets/iscc/copilot.js`, `copilot.css` | The loader and styles of the iscc.ai chat widget                                 |
+| `zensical_iscc/cli.py`, `markdown.py`, `check.py`, `project.py` | The `zensical-iscc` command                                                      |
+| `zensical_iscc/project_logo.py`                          | Draws the project logo                                                           |
 | `zensical.toml`, `docs/`                                 | This site and the reference configuration                                        |
 | `CHANGELOG.md`                                           | Release notes. A git hook copies them to `docs/changelog.md`                     |
 | `skills/iscc-docs-theme/`                                | The setup skill and the docs workflow template for sites                         |
 | `skills/docs-for-agents/`                                | The skill for the "For Coding Agents" page                                       |
 | `.claude-plugin/marketplace.json`                        | The plugin marketplace. Its one entry points to `skills/`                        |
 | `skills/.claude-plugin/`                                 | The plugin manifest and its icon. The plugin version is the package version      |
-| `tests/fixtures/project-logos/`                               | Reference project logos. `project_logo.py` must make the same files, byte for byte       |
+| `tests/fixtures/project-logos/`                          | Reference project logos. `project_logo.py` must make the same files, byte for byte |
 
 Zensical copies all files of the theme directory that are not templates into the built site, so `theme/` contains
 no Python code. The `mkdocs.themes` entry point names an object whose `__file__` is in `theme/`.
@@ -57,8 +57,8 @@ Some files are copies. Update them from their source. Do not edit them here.
 
 | Files                                         | Source                                                                    |
 | --------------------------------------------- | ------------------------------------------------------------------------- |
-| Tokens, fonts, logos, favicons, `grain.png`, the app tile, the plugin icon | ISCC sources that are not public             |
-| `tests/fixtures/project-logos/`                    | The ISCC brand assets. Port changes of the project logo construction to `project_logo.py` |
+| Tokens, fonts, logos, favicons, `grain.png`, the app tile, the plugin icon | ISCC sources that are not public                                          |
+| `tests/fixtures/project-logos/`               | The ISCC brand assets. Port changes of the project logo construction to `project_logo.py` |
 | `skills/docs-for-agents/SKILL.md`             | `plugins/docs-for-agents/` in [titusz/skills](https://github.com/titusz/skills) |
 | `docs/changelog.md`                           | `CHANGELOG.md`, written by the `changelog` git hook                       |
 

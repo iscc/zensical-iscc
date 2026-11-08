@@ -2,31 +2,22 @@
 
 To upgrade a site, change the `tag` in its `[tool.uv.sources]` and run `uv lock --upgrade-package zensical-iscc`.
 
-## Unreleased
+## 0.3.0 - 2026-11-08
 
 Pins **Zensical 0.1.0**.
 
-- **Project logo.** `zensical-iscc build` draws the ISCC project logo, for example "ISCC |
-    monitor.". The name comes from `project` in `[project.extra.iscc]`, or else from `repo_name` without `iscc-`.
-    The check reports a missing or invalid name and a missing project logo.
-- **Header.** The header is Deep Navy with grain and 72px high. It aligns with the body at all screen widths. A
-    "Projects" menu links to the related ISCC sites in `[[project.extra.iscc.related]]`.
-- **For Coding Agents.** The last navigation entry of each site is the `for-coding-agents.md` page. The check gives
-    a warning if the page is missing or not in `nav`. The plugin has the `docs-for-agents` skill, which writes the
-    page.
-- **Markdown for agents.** The build writes an `llms.txt` index with the agent page first. Each page links to its
-    Markdown copy with `<link rel="alternate" type="text/markdown">`.
-- **Type and buttons.** Body text is Readex Pro Light at 16px, with lines of about 75 characters. The primary button
-    is a near-black pointed block with a white label and a coral chevron.
-- **Navigation icons.** Pages set `icon: lucide/<name>` in their front matter.
-- **Footer.** The footer bar is near-black and uses the columns of the page. It has the ISCC symbol and the links
-    that all ISCC sites share: ISCC Foundation, Privacy Policy, Imprint and CC BY 4.0. After the social links of the
-    site, it shows the LinkedIn and X pages of the ISCC Foundation. Set `copyright` to plain text, such as
-    "Copyright © 2026 The Authors". The check gives a warning if `copyright` still contains links.
-- **Alignment.** The header, the columns and the footer share one grid. The search field ends with the content column, the repository icon is above the table of contents, and the first lines of the three columns are on one line.
-- **Dark code blocks.** Code blocks in the dark scheme are graphite with a thin rule instead of navy.
-- The phone drawer keeps its top offset and shows only the ISCC logo.
-- The theme documentation has its own site at theme.iscc.codes. This repository builds it.
+- **Project logo.** The header shows the ISCC project logo, for example "ISCC | monitor.". `zensical-iscc build`
+    draws it from `project` in `[project.extra.iscc]`, or from `repo_name` without `iscc-`.
+- **Header and footer.** Both are Deep Navy with grain and align with the page columns. A "Projects" menu links the
+    related ISCC sites in `[[project.extra.iscc.related]]`. The footer shows the ISCC links and the social links of
+    the site and of the ISCC Foundation.
+- **For Coding Agents.** Each site ends its navigation with `for-coding-agents.md`. The `docs-for-agents` skill of
+    the plugin writes it. The build writes an `llms.txt` index with this page first.
+- **Type.** Body text is Readex Pro Light at 16px. Pages set a navigation icon with `icon: lucide/<name>`.
+- The theme documentation is at <https://theme.iscc.codes/>.
+
+Upgrade: `zensical-iscc check --strict` fails until the site has a For Coding Agents page and a plain-text
+`copyright`.
 
 ## 0.2.0 - 2026-10-09
 

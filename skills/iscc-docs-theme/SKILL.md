@@ -197,4 +197,3 @@ the plain text.
     cannot see.
 - No Mermaid until the theme serves it.
 - No `navigation.instant`: lightbox pages would then load GLightbox from unpkg.com.
-- The theme's `docs/` documents `[project.extra.iscc]` and the CSS classes for ISCC-UNIT labels.

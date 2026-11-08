@@ -5,9 +5,8 @@ description: How the theme applies the ISCC brand to Zensical, and why
 
 # Design
 
-The theme applies the ISCC brand to the modern Material design of Zensical. The
-colors, fonts and logos come from the ISCC brand assets, as design tokens and copies of the files. The theme maps the
-tokens to the Zensical variables. It adds styles for the parts that the tokens do not cover.
+The theme applies the ISCC brand to the modern Material design of Zensical. The colors, fonts and logos come from
+the ISCC brand assets.
 
 ## Schemes
 
@@ -23,26 +22,24 @@ operating system.
 
 The header is the same in both schemes: Deep Navy with a grain texture, 72px high, with controls in 78% white.
 
-- The header starts with the project logo in white and coral, at a symbol height of 24px. The brand minimum is
-    14px.
+- The header starts with the project logo in white and coral, at a symbol height of 24px.
 - The page title, which replaces the site name when the page scrolls, sits on the baseline of the logo letters.
 - The header content aligns with the columns below. The logo starts at the coral marker of the navigation. The
     search field ends at the right edge of the content column. The repository icon is above the text of the table
     of contents.
-- Without a project logo, the header shows the plain ISCC logo and the site name in spaced Light capitals. On phones, it
-    shows only the logo.
+- Without a project logo, the header shows the plain ISCC logo and the site name in spaced Light capitals. On
+    phones, it shows only the logo.
 
 ## Footer
 
-The footer bar is near-black in both schemes. It uses the same columns as the page.
+The footer bar is one row, Deep Navy with a grain texture like the header, and 52px high. Its ends align with the
+ends of the header.
 
-- The white and coral ISCC symbol is in the navigation column, at the same edge as the header logo.
-- The links that all ISCC sites share are in the content column: ISCC Foundation, Privacy Policy, Imprint and the
-    CC BY 4.0 license.
-- A thin line separates the last line: the `copyright` text of the site and "Made with Zensical", in 65% white.
-- The social links are in the table of contents column: the links of the site from `[[project.extra.social]]`,
-    then the LinkedIn and X pages of the ISCC Foundation.
-- Links are white without underline. On hover and focus, they are cyan and underlined.
+- On the left: the white ISCC logo, the `copyright` text of the site and "Made with Zensical".
+- On the right: the links that all ISCC sites share (ISCC Foundation, Privacy Policy, Imprint, CC BY 4.0), then the
+    social links of the site from `[[project.extra.social]]` and the LinkedIn and X pages of the ISCC Foundation.
+- Links and icons are 78% white. On hover and focus, they are white.
+- On narrow screens, the row wraps.
 
 ## Color roles
 
@@ -56,8 +53,7 @@ The footer bar is near-black in both schemes. It uses the same columns as the pa
 
 ## Type
 
-- Body text is Readex Pro Light at 16px on all screen widths. Zensical makes the root font size larger on wide
-    screens. The theme keeps it at 125%.
+- Body text is Readex Pro Light at 16px on all screen widths.
 - The lead paragraph has the same weight and a larger size, 1.2em.
 - Lines of running text stop at about 75 characters. Tables, code and cards use the full width of the column.
 - Table headers, section labels and the previous and next labels in the footer use small JetBrains Mono capitals.
