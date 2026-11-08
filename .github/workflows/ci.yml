@@ -16,7 +16,7 @@ env:
 
 jobs:
   quality:
-    name: Hooks, demo site and dependency audit
+    name: Hooks, docs site and dependency audit
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,10 +31,10 @@ jobs:
       - run: uv sync --frozen
       - name: Run all prek hooks
         run: uv run prek run --all-files --show-diff-on-failure
-      - name: Build and check the demo site
+      - name: Build and check the docs site
         run: |
-          uv run poe demo-build
-          uv run poe demo-check
+          uv run poe docs-build
+          uv run poe docs-check
       - name: Audit locked dependencies
         run: uv run poe audit
 

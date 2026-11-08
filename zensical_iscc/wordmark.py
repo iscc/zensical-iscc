@@ -1,13 +1,13 @@
-"""Compose the brand kit's product wordmark lockup for a site's product name.
+"""Compose the ISCC product wordmark lockup for a site's product name.
 
-A port of the signed-before lockup from the brand kit's `source/products.py`: the ISCC primary signature, a
+The signed-before lockup of the ISCC brand: the ISCC primary signature, a
 hairline 1 h tall and 0.04 h wide in the word colour at 50 % opacity, 0.3 h of space on each side, then the
 product name in Readex Pro Bold with a tracking of -10/1000 em and a coral point. h is the height of the ISCC
 symbol, which equals the ascender height of the word. Clear space is the ISCC logo's own, 0.25 x.
 
-The signature masters and the Bold font are the theme's copies of the kit files, so the output matches the
-kit's `build/products/` files byte for byte; `tests/test_wordmark.py` guards that. Keep the arithmetic in the
-same order as the kit's, since coordinates are rounded to two decimals.
+The signature masters and the Bold font are the theme's copies of the ISCC brand assets, so the output matches
+the reference lockups in `tests/fixtures/products/` byte for byte; `tests/test_wordmark.py` guards that. Keep
+the arithmetic in its order, since coordinates are rounded to two decimals.
 """
 
 import re
@@ -38,7 +38,7 @@ HEADER_H = 30  # CSS px of 1 h in the header; the brand minimum is 14
 
 def fmt(value):
     # type: (float) -> str
-    """Format a coordinate with at most two decimals, as the kit does."""
+    """Format a coordinate with at most two decimals, as the reference lockups do."""
     text = f"{value:.2f}".rstrip("0").rstrip(".")
     return "0" if text in ("", "-0") else text
 

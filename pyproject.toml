@@ -21,6 +21,7 @@ classifiers = [
 dependencies = [
     "zensical==0.1.0",
     "fonttools[woff]>=4.65",
+    "pyyaml>=6",
 ]
 
 [project.urls]
@@ -101,13 +102,13 @@ skip_covered = true
 skip_empty = true
 
 [tool.poe.tasks]
-format = { sequence = [{ cmd = "ruff format ." }, { cmd = "ruff check --fix ." }, { cmd = "mdformat README.md CLAUDE.md skills" }], help = "Format and autofix code and docs" }
-lint = { sequence = [{ cmd = "ruff format --check ." }, { cmd = "ruff check ." }, { cmd = "mdformat --check README.md CLAUDE.md skills" }], help = "Check formatting and lint rules" }
+format = { sequence = [{ cmd = "ruff format ." }, { cmd = "ruff check --fix ." }, { cmd = "mdformat README.md CLAUDE.md CHANGELOG.md skills/iscc-docs-theme" }], help = "Format and autofix code and docs" }
+lint = { sequence = [{ cmd = "ruff format --check ." }, { cmd = "ruff check ." }, { cmd = "mdformat --check README.md CLAUDE.md CHANGELOG.md skills/iscc-docs-theme" }], help = "Check formatting and lint rules" }
 typecheck = { cmd = "pyright", help = "Static type check" }
 test = { cmd = "pytest --cov --cov-report=term-missing", help = "Run tests with 100% branch coverage gate" }
 audit = { cmd = "uv audit --frozen", help = "Check locked dependencies for known vulnerabilities" }
-demo-build = { cmd = "zensical-iscc build --config-file demo/zensical.toml", help = "Build the demo site into demo/site/" }
-demo-check = { cmd = "zensical-iscc check --strict --config-file demo/zensical.toml", help = "Check the built demo site" }
-demo = { sequence = ["demo-build", { cmd = "python -m http.server 45472 --bind 127.0.0.1 --directory demo/site" }], help = "Build the demo site and serve it on 127.0.0.1:45472" }
+docs-build = { cmd = "zensical-iscc build", help = "Build the documentation site into site/" }
+docs-check = { cmd = "zensical-iscc check --strict", help = "Check the built documentation site" }
+docs = { sequence = ["docs-build", { cmd = "python -m http.server 45472 --bind 127.0.0.1 --directory site" }], help = "Build the documentation site and serve it on 127.0.0.1:45472" }
 all = { sequence = ["format", "typecheck", "test"], help = "Format, type check and test (local dev loop)" }
-ci = { sequence = ["lint", "typecheck", "test", "demo-build", "demo-check", "audit"], help = "All quality gates without modifying files" }
+ci = { sequence = ["lint", "typecheck", "test", "docs-build", "docs-check", "audit"], help = "All quality gates without modifying files" }

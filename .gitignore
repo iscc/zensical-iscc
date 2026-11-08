@@ -28,3 +28,9 @@ CLAUDE.local.md
 AGENTS.md
 cauldron/
 scratch/
+
+# Local agent tooling
+.agents/
+.tessl/
+.mcp.json
+tessl.json

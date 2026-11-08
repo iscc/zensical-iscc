@@ -1,4 +1,4 @@
-"""Shared fixtures: a writable copy of the demo site and a helper to build it with the theme."""
+"""Shared fixtures: a writable copy of the theme's documentation site and a helper to build it with the theme."""
 
 import shutil
 from pathlib import Path
@@ -7,14 +7,15 @@ import pytest
 
 from zensical_iscc import cli
 
-DEMO_DIR = Path(__file__).parent.parent / "demo"
+ROOT = Path(__file__).parent.parent
 
 
 @pytest.fixture
-def demo_config(tmp_path):
-    """Return the configuration path of a fresh copy of the demo site."""
-    target = tmp_path / "demo"
-    shutil.copytree(DEMO_DIR, target, ignore=shutil.ignore_patterns("site"))
+def docs_config(tmp_path):
+    """Return the configuration path of a fresh copy of the theme's documentation site."""
+    target = tmp_path / "site-copy"
+    shutil.copytree(ROOT / "docs", target / "docs")
+    shutil.copy(ROOT / "zensical.toml", target / "zensical.toml")
     return target / "zensical.toml"
 
 

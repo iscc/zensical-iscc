@@ -1,4 +1,4 @@
-"""Product wordmark lockups: fidelity to the brand kit, product names and the build step."""
+"""Product wordmark lockups: fidelity to the reference lockups, product names and the build step."""
 
 import re
 from pathlib import Path
@@ -8,20 +8,20 @@ from conftest import build, edit_config
 
 from zensical_iscc import check, cli, wordmark
 
-KIT_FILES = Path(__file__).parent / "fixtures" / "products"
+REFERENCE_LOCKUPS = Path(__file__).parent / "fixtures" / "products"
 
 
-@pytest.mark.parametrize("path", sorted(KIT_FILES.glob("*.svg")), ids=lambda p: p.stem)
-def test_compose_matches_the_brand_kit(path):
-    # Fixtures are the brand kit's build/products/ files; refresh them from ../iscc-brand with the font.
+@pytest.mark.parametrize("path", sorted(REFERENCE_LOCKUPS.glob("*.svg")), ids=lambda p: p.stem)
+def test_compose_matches_the_reference_lockups(path):
+    # Fixtures are reference lockups from the ISCC brand assets; refresh them together with the font.
     name, treatment = re.fullmatch(r"iscc-(.+)-(white-coral|black-coral)", path.stem).groups()
     assert wordmark.compose(name, treatment) == path.read_text(encoding="utf-8")
 
 
 def test_display_size_sets_one_h_and_keeps_the_drawing():
-    kit, display = wordmark.compose("monitor"), wordmark.compose("monitor", display_h=30)
+    native, display = wordmark.compose("monitor"), wordmark.compose("monitor", display_h=30)
     assert 'width="335.69" height="39.64"' in display
-    assert re.sub(r'width="[^"]*" height="[^"]*"', "", kit, count=1) == re.sub(
+    assert re.sub(r'width="[^"]*" height="[^"]*"', "", native, count=1) == re.sub(
         r'width="[^"]*" height="[^"]*"', "", display, count=1
     )
 
@@ -49,28 +49,29 @@ def test_product_name_prefers_the_option_then_the_repository():
     assert wordmark.product_name({}) is None
 
 
-def test_build_writes_the_header_lockup(demo_config):
-    site = build(demo_config)
+def test_build_writes_the_header_lockup(docs_config):
+    site = build(docs_config)
     svg = (site / "assets" / "iscc" / "product.svg").read_text(encoding="utf-8")
-    assert 'aria-label="ISCC zensical-iscc"' in svg
+    assert 'aria-label="ISCC theme"' in svg
     assert 'fill="#FFFFFF"' in svg
     html = (site / "index.html").read_text(encoding="utf-8")
     assert 'class="iscc-product" src="./assets/iscc/product.svg"' in html
     assert 'onerror="this.remove()"' in html
 
 
-def test_build_without_a_product_name_keeps_the_plain_logo(demo_config, capsys):
-    edit_config(demo_config, 'repo_name = "iscc/zensical-iscc"', "")
-    site = build(demo_config)
+def test_build_without_a_product_name_keeps_the_plain_logo(docs_config, capsys):
+    edit_config(docs_config, 'product = "theme"', "")
+    edit_config(docs_config, 'repo_name = "iscc/zensical-iscc"', "")
+    site = build(docs_config)
     assert not (site / wordmark.OUTPUT).exists()
     assert "no product name" in capsys.readouterr().out
-    findings = check.check(demo_config)
+    findings = check.check(docs_config)
     assert ("warning", check.product_findings({})[0][1]) in findings
 
 
-def test_build_fails_on_a_product_outside_the_rule(demo_config):
-    edit_config(demo_config, "[project.extra.iscc]\n", '[project.extra.iscc]\nproduct = "ISCC Hub"\n')
-    assert cli.main(["build", "--config-file", str(demo_config)]) == 1
+def test_build_fails_on_a_product_outside_the_rule(docs_config):
+    edit_config(docs_config, 'product = "theme"', 'product = "ISCC Hub"')
+    assert cli.main(["build", "--config-file", str(docs_config)]) == 1
 
 
 def test_product_findings():
@@ -79,7 +80,7 @@ def test_product_findings():
     assert check.product_findings({"extra": {"iscc": {"product": "iscc-hub"}}})[0][0] == "error"
 
 
-def test_check_finds_a_missing_lockup(demo_config):
-    site = build(demo_config)
+def test_check_finds_a_missing_lockup(docs_config):
+    site = build(docs_config)
     (site / wordmark.OUTPUT).unlink()
-    assert any("wordmark is missing" in message for _, message in check.check(demo_config))
+    assert any("wordmark is missing" in message for _, message in check.check(docs_config))

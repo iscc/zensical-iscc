@@ -1,6 +1,6 @@
 """Command line for sites that use the ISCC theme.
 
-zensical-iscc build      build the site with Zensical, then add its Markdown pages and product wordmark
+zensical-iscc build      build the site with Zensical, then add its Markdown pages, llms.txt and product wordmark
 zensical-iscc markdown   publish the Markdown pages into an already built site
 zensical-iscc check      check the configuration and the built site
 """
@@ -57,7 +57,7 @@ def run_wordmark(config_path):
 
 def run_markdown(config_path):
     # type: (Path) -> int
-    """Write the Markdown copies of all pages and `llms-full.txt` into the built site."""
+    """Write the Markdown copies of all pages, `llms-full.txt` and `llms.txt` into the built site."""
     config = project.load_project(config_path)
     built_dir = project.site_dir(config_path, config)
     if not built_dir.is_dir():
@@ -66,8 +66,8 @@ def run_markdown(config_path):
     docs_dir = project.docs_dir(config_path, config)
     found = markdown.page_sources(docs_dir, project.custom_dir(config_path, config))
     sources = markdown.ordered_sources(found, config.get("nav", []))
-    markdown.write_pages(docs_dir, built_dir, sources)
-    print(f"wrote {len(sources)} Markdown pages and llms-full.txt to {built_dir}")
+    markdown.write_pages(docs_dir, built_dir, sources, config)
+    print(f"wrote {len(sources)} Markdown pages, llms-full.txt and llms.txt to {built_dir}")
     return 0
 
 

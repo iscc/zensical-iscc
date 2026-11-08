@@ -1,15 +1,43 @@
 ---
 icon: lucide/layout-grid
-description: The page elements ISCC documentation uses, styled by the ISCC theme
+description: The page elements that the ISCC theme styles
 ---
 
 # Components
 
-Every element below is styled by the theme. Check this page in both colour schemes after a theme or Zensical change.
+The theme styles each element on this page. After a change to the theme or to Zensical, look at this page in both
+color schemes.
+
+The theme also styles these ISCC components. Do not style them again in the stylesheets of a site.
+
+| Class                                                                 | Use                                                                          |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `.iscc-lead`                                                          | The first paragraph of a page, in a larger size. Add `{ .iscc-lead }` on the line after it |
+| `.iscc-btn`, `.iscc-btn--primary`                                     | Call-to-action buttons on links, with space between them in a row: `[Start](start.md){ .iscc-btn .iscc-btn--primary }` |
+| `.iscc-cards`, `.iscc-card`                                           | Audience cards, three in a row on wide screens. Each card has an `h3`, text and a last paragraph with one link |
+| `.iscc-unit--meta`, `--semantic`, `--content`, `--data`, `--instance` | ISCC-UNIT labels in the colors of their units                                |
+
+Cards need the `md_in_html` extension and blank lines around each block:
+
+```html
+<div class="iscc-cards" markdown>
+
+<div class="iscc-card" markdown>
+
+### Developers
+
+Generate ISCC codes from your own code.
+
+[Get started →](start.md)
+
+</div>
+
+</div>
+```
 
 ## Lead paragraph
 
-The opening paragraph of a page, set apart by size. Mark it with `{ .iscc-lead }` on the line after the paragraph.
+The first paragraph of a page, in a larger size. Add `{ .iscc-lead }` on the line after the paragraph.
 { .iscc-lead }
 
 ## Calls to action

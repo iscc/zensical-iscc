@@ -182,8 +182,8 @@ html {
   font-size: 125%;
 }
 
-/* Body copy is Readex Pro Light at 16px, a step lighter than the brand kit's
- * Regular for a quieter page; the lead paragraph shares the weight and stands
+/* Body copy is Readex Pro Light at 16px, a step lighter than Regular for a
+ * quieter page; the lead paragraph shares the weight and stands
  * apart by size. Headings, emphasis and the current page use Medium or Semibold. */
 .md-typeset {
   font-size: 0.8rem;
@@ -227,8 +227,8 @@ html {
   font-weight: 600;
 }
 
-/* Running text stops at about 75 characters per line, the upper end of the
- * brand kit's 45-75. Tables, code, cards, tabs and paragraphs holding images
+/* Running text stops at about 75 characters per line, the upper end of a
+ * 45-75 measure. Tables, code, cards, tabs and paragraphs holding images
  * keep the full column. */
 .md-content__inner > :is(p, ul, ol, dl, blockquote, .admonition, details):not(:has(img)) {
   max-width: 36rem;
@@ -522,7 +522,7 @@ html {
 
 /* ---------- Buttons ---------- */
 
-/* The brand kit's button system. Labels are JetBrains Mono Medium capitals.
+/* The ISCC button system. Labels are JetBrains Mono Medium capitals.
  * The primary button is a pointed near-black block with a white label
  * (15.43:1), followed by a coral chevron; text never sits on coral. In the
  * dark scheme the block turns white with a near-black label. The secondary
@@ -652,9 +652,8 @@ html {
 
 /* ---------- Header ---------- */
 
-/* A Deep Navy bar with grain in both schemes, after the iscc-web top bar,
- * with quiet white controls (78% white, 8.6:1 on navy). It leads with the
- * brand kit's product wordmark lockup in white/coral, written by
+/* A Deep Navy bar with grain in both schemes, with quiet white controls
+ * (78% white, 8.6:1 on navy). It leads with the ISCC product wordmark lockup in white/coral, written by
  * `zensical-iscc build`; without it, and on phones, the plain signature and
  * the site name in spaced Light capitals take its place. The bar is 64px
  * high, and its content shares the body's edges: the logo starts at the
@@ -745,7 +744,7 @@ html {
   text-transform: uppercase;
 }
 
-/* On phones the site name gives way to the logo, as in iscc-web, and keeps its space */
+/* On phones the site name gives way to the logo and keeps its space */
 @media screen and (max-width: 35.9375em) {
   .md-header__ellipsis {
     visibility: hidden;

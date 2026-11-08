@@ -25,27 +25,41 @@ def test_theme_extends_zensical_material():
     assert "font: false" in text
 
 
-def test_demo_home_page(demo_config):
-    html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
-    assert "<title>ISCC Theme Demo - Zensical theme for ISCC documentation</title>" in html
+def test_docs_home_page(docs_config):
+    html = (build(docs_config) / "index.html").read_text(encoding="utf-8")
+    assert "<title>ISCC Theme - Zensical theme for ISCC documentation</title>" in html
     assert "assets/iscc/theme.css" in html
     assert "assets/iscc/tokens/iscc.css" in html
     assert "iscc-logo--light" in html
     assert "iscc-logo--dark" in html
-    assert 'content="https://example.iscc.codes/assets/iscc/social-share.png"' in html
-    assert 'data-domain="example.iscc.codes" src="https://stats.iscc.codes/js/plausible.js"' in html
+    assert 'content="https://theme.iscc.codes/assets/iscc/social-share.png"' in html
+    assert 'data-domain="theme.iscc.codes" src="https://stats.iscc.codes/js/plausible.js"' in html
     assert "assets/iscc/copypage.js" in html
     assert "iscc.ai/copilot" not in html
     assert "glightbox" not in html
 
 
-def test_demo_inner_page_title(demo_config):
-    html = (build(demo_config) / "components" / "index.html").read_text(encoding="utf-8")
-    assert "<title>Components - ISCC Theme Demo</title>" in html
+def test_docs_inner_page_title(docs_config):
+    html = (build(docs_config) / "components" / "index.html").read_text(encoding="utf-8")
+    assert "<title>Components - ISCC Theme</title>" in html
 
 
-def test_front_matter_icons_in_navigation(demo_config):
-    html = (build(demo_config) / "components" / "index.html").read_text(encoding="utf-8")
+def test_pages_link_their_markdown_copy_but_the_404_page_does_not(docs_config):
+    site = build(docs_config)
+    link = '<link rel="alternate" type="text/markdown" href="./index.md">'
+    assert link in (site / "index.html").read_text(encoding="utf-8")
+    assert link in (site / "components" / "index.html").read_text(encoding="utf-8")
+    assert "text/markdown" not in (site / "404.html").read_text(encoding="utf-8")
+
+
+def test_docs_site_publishes_the_changelog_and_its_domain(docs_config):
+    site = build(docs_config)
+    assert (site / "changelog" / "index.md").read_text(encoding="utf-8").startswith("# Changelog\n")
+    assert (site / "CNAME").read_text(encoding="utf-8").strip() == "theme.iscc.codes"
+
+
+def test_front_matter_icons_in_navigation(docs_config):
+    html = (build(docs_config) / "components" / "index.html").read_text(encoding="utf-8")
     nav = html[html.index("md-nav--primary") : html.index("md-nav--secondary")]
     assert 'class="lucide lucide-house"' in nav
     assert 'class="lucide lucide-layout-grid"' in nav
@@ -64,8 +78,8 @@ def test_header_is_zensicals_plus_the_projects_menu():
     assert ours.replace(include, "") == upstream
 
 
-def test_demo_header_lists_related_projects(demo_config):
-    html = (build(demo_config) / "components" / "index.html").read_text(encoding="utf-8")
+def test_docs_header_lists_related_projects(docs_config):
+    html = (build(docs_config) / "components" / "index.html").read_text(encoding="utf-8")
     menu = html[html.index('class="md-header__option iscc-projects"') : html.index('data-md-component="palette"')]
     assert 'aria-label="Related projects"' in menu
     assert ">Projects</span>" in menu
@@ -74,27 +88,27 @@ def test_demo_header_lists_related_projects(demo_config):
     assert '<span class="iscc-projects__description">Similarity search engine for ISCC codes</span>' in menu
     assert menu.count("aria-current") == 1
     assert (
-        '<a href="https://example.iscc.codes/" class="md-select__link iscc-projects__link" aria-current="true">' in menu
+        '<a href="https://theme.iscc.codes/" class="md-select__link iscc-projects__link" aria-current="true">' in menu
     )
 
 
-def test_no_projects_menu_without_related_projects(demo_config):
-    text = demo_config.read_text(encoding="utf-8")
+def test_no_projects_menu_without_related_projects(docs_config):
+    text = docs_config.read_text(encoding="utf-8")
     text = re.sub(r"\[\[project\.extra\.iscc\.related\]\][^\[]*", "", text)
-    demo_config.write_text(text, encoding="utf-8")
-    html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
+    docs_config.write_text(text, encoding="utf-8")
+    html = (build(docs_config) / "index.html").read_text(encoding="utf-8")
     assert "iscc-projects" not in html
 
 
-def test_no_current_site_marker_without_site_url(demo_config):
-    edit_config(demo_config, 'site_url = "https://example.iscc.codes/"', "")
-    html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
+def test_no_current_site_marker_without_site_url(docs_config):
+    edit_config(docs_config, 'site_url = "https://theme.iscc.codes/"', "")
+    html = (build(docs_config) / "index.html").read_text(encoding="utf-8")
     assert html.count('class="md-select__link iscc-projects__link"') == 5
     assert "aria-current" not in html
 
 
-def test_demo_site_ships_theme_assets_but_no_python(demo_config):
-    site = build(demo_config)
+def test_docs_site_ships_theme_assets_but_no_python(docs_config):
+    site = build(docs_config)
     assert (site / "assets" / "iscc" / "theme.css").is_file()
     assert (site / "assets" / "iscc" / "fonts" / "readex-pro-400.woff2").is_file()
     assert (site / "assets" / "iscc" / "favicon.svg").is_file()
@@ -102,38 +116,38 @@ def test_demo_site_ships_theme_assets_but_no_python(demo_config):
     assert not list(site.rglob("*.py"))
 
 
-def test_demo_site_passes_strict_check(demo_config):
-    build(demo_config)
-    assert cli.main(["check", "--strict", "--config-file", str(demo_config)]) == 0
+def test_docs_site_passes_strict_check(docs_config):
+    build(docs_config)
+    assert cli.main(["check", "--strict", "--config-file", str(docs_config)]) == 0
 
 
-def test_lightbox_pages_load_the_vendored_glightbox(demo_config):
-    docs = demo_config.parent / "docs"
+def test_lightbox_pages_load_the_vendored_glightbox(docs_config):
+    docs = docs_config.parent / "docs"
     (docs / "gallery.md").write_text(
         '# Gallery\n\n<a class="glightbox" href="../assets/iscc/social-share.png">Card</a>\n', encoding="utf-8"
     )
-    site = build(demo_config)
+    site = build(docs_config)
     gallery = (site / "gallery" / "index.html").read_text(encoding="utf-8")
     assert "assets/iscc/vendor/glightbox/glightbox.min.js" in gallery
     assert "assets/iscc/vendor/glightbox/glightbox.min.css" in gallery
     assert "glightbox" not in (site / "index.html").read_text(encoding="utf-8")
 
 
-def test_chat_on_and_copy_page_off(demo_config):
-    edit_config(demo_config, "copy_page = true", "copy_page = false")
-    edit_config(demo_config, "chat = false", "chat = true")
-    html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
+def test_chat_on_and_copy_page_off(docs_config):
+    edit_config(docs_config, "copy_page = true", "copy_page = false")
+    edit_config(docs_config, "chat = false", "chat = true")
+    html = (build(docs_config) / "index.html").read_text(encoding="utf-8")
     assert "assets/iscc/copypage.js" not in html
     assert "https://iscc.ai/copilot/index.js" in html
     assert "assets/iscc/copilot.js" in html
 
 
-def test_site_override_on_top_of_theme(demo_config):
-    overrides = demo_config.parent / "overrides" / "partials"
+def test_site_override_on_top_of_theme(docs_config):
+    overrides = docs_config.parent / "overrides" / "partials"
     overrides.mkdir(parents=True)
     (overrides / "logo.html").write_text('<img src="site-logo.svg" alt="Site">\n', encoding="utf-8")
-    edit_config(demo_config, 'name = "zensical_iscc"', 'name = "zensical_iscc"\ncustom_dir = "overrides"')
-    site = build(demo_config)
+    edit_config(docs_config, 'name = "zensical_iscc"', 'name = "zensical_iscc"\ncustom_dir = "overrides"')
+    site = build(docs_config)
     html = (site / "index.html").read_text(encoding="utf-8")
     assert 'src="site-logo.svg"' in html
     assert "iscc-logo--light" not in html
@@ -141,22 +155,22 @@ def test_site_override_on_top_of_theme(demo_config):
     assert (site / "assets" / "iscc" / "theme.css").is_file()
 
 
-def test_front_matter_location_redirects(demo_config):
-    docs = demo_config.parent / "docs"
+def test_front_matter_location_redirects(docs_config):
+    docs = docs_config.parent / "docs"
     (docs / "moved.md").write_text("---\nlocation: ../components/\n---\n\n# Moved\n", encoding="utf-8")
-    html = (build(demo_config) / "moved" / "index.html").read_text(encoding="utf-8")
+    html = (build(docs_config) / "moved" / "index.html").read_text(encoding="utf-8")
     assert '<meta http-equiv="refresh" content="0;url=../components/">' in html
 
 
-def test_analytics_domain_override(demo_config):
-    edit_config(demo_config, "[project.theme]", '[project.extra.analytics]\ndomain = "iscc.codes"\n\n[project.theme]')
-    html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
+def test_analytics_domain_override(docs_config):
+    edit_config(docs_config, "[project.theme]", '[project.extra.analytics]\ndomain = "iscc.codes"\n\n[project.theme]')
+    html = (build(docs_config) / "index.html").read_text(encoding="utf-8")
     assert 'data-domain="iscc.codes" src="https://stats.iscc.codes/js/plausible.js"' in html
 
 
-def test_no_analytics_without_site_url(demo_config):
-    edit_config(demo_config, 'site_url = "https://example.iscc.codes/"', "")
-    html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
+def test_no_analytics_without_site_url(docs_config):
+    edit_config(docs_config, 'site_url = "https://theme.iscc.codes/"', "")
+    html = (build(docs_config) / "index.html").read_text(encoding="utf-8")
     assert "data-domain" not in html
     assert "plausible.js" not in html
 
@@ -183,7 +197,7 @@ def test_header_overrides_spare_the_drawer_and_reach_the_magnifier():
     assert ".md-search__button::before {\n  background-color: currentColor;" in css
 
 
-def test_page_components_are_styled_by_the_theme(demo_config):
+def test_page_components_are_styled_by_the_theme(docs_config):
     css = (THEME_DIR / "assets" / "iscc" / "theme.css").read_text(encoding="utf-8")
     for selector in (
         ".md-typeset .iscc-lead",
@@ -192,7 +206,7 @@ def test_page_components_are_styled_by_the_theme(demo_config):
         ".md-typeset .iscc-btn--primary",
     ):
         assert selector in css
-    html = (build(demo_config) / "components" / "index.html").read_text(encoding="utf-8")
+    html = (build(docs_config) / "components" / "index.html").read_text(encoding="utf-8")
     assert 'class="iscc-lead"' in html
     assert 'class="iscc-btn iscc-btn--primary"' in html
     assert html.count('class="iscc-card"') == 3

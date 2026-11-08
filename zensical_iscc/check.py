@@ -129,6 +129,17 @@ def related_findings(config):
     return [finding for index, entry in enumerate(related, 1) for finding in related_entry_findings(index, entry)]
 
 
+def agent_page_findings(sources, nav):
+    # type: (list[Path], list) -> list[tuple[str, str]]
+    """Check that the site has a "For Coding Agents" page and lists it in its navigation."""
+    page = markdown.agent_page(sources)
+    if page is None:
+        return [warning("add docs/for-coding-agents.md: write it with the docs-for-agents skill of zensical-iscc")]
+    if nav and page.as_posix() not in markdown.flatten_nav(nav):
+        return [warning(f'list {page.as_posix()} in `nav` as {{ "For Coding Agents" = "{page.as_posix()}" }}')]
+    return []
+
+
 def wordmark_findings(config, built_dir):
     # type: (dict, Path) -> list[tuple[str, str]]
     """Check that the built site holds the product wordmark the header shows."""
@@ -210,9 +221,10 @@ def site_findings(built_dir):
 
 def markdown_findings(built_dir, sources):
     # type: (Path, list[Path]) -> list[tuple[str, str]]
-    """Check that the Markdown copies of the pages and `llms-full.txt` are in the built site."""
+    """Check that the Markdown copies of the pages, `llms-full.txt` and `llms.txt` are in the built site."""
     missing = [p for p in sources if not markdown.output_path(built_dir, p).is_file()]
-    if missing or not (built_dir / "llms-full.txt").is_file():
+    missing += [name for name in ("llms-full.txt", "llms.txt") if not (built_dir / name).is_file()]
+    if missing:
         return [error("Markdown pages are missing from the site; build with `zensical-iscc build`")]
     return []
 
@@ -226,9 +238,10 @@ def check(config_path):
     findings += custom_dir_findings(override_dir)
     findings += metadata_findings(config) + product_findings(config) + related_findings(config)
     findings += analytics_findings(config) + extra_asset_findings(config)
+    sources = markdown.page_sources(project.docs_dir(config_path, config), override_dir)
+    findings += agent_page_findings(sources, config.get("nav", []))
     built_dir = project.site_dir(config_path, config)
     if not built_dir.is_dir():
         return [*findings, warning("the site is not built; run `zensical-iscc build` to check its pages")]
-    sources = markdown.page_sources(project.docs_dir(config_path, config), override_dir)
     findings += site_findings(built_dir) + markdown_findings(built_dir, sources)
     return findings + wordmark_findings(config, built_dir)

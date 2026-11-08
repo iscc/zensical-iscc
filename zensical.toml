@@ -1,40 +1,50 @@
-# Reference configuration for an ISCC documentation site on the zensical-iscc theme.
+# Configuration of theme.iscc.codes, the documentation of the theme. It is also the
+# reference configuration for all ISCC documentation sites on the zensical-iscc theme.
 #
-# Sites copy this file and replace the values marked "site". Everything else is
-# the shared ISCC setup; change it only for a reason the site can name.
-# `zensical-iscc check` reports deviations that break the theme or its privacy rules.
+# To start a site, copy this file and replace the values marked "site". All other values
+# are the shared ISCC setup. Change them only if the site has a clear reason.
+# `zensical-iscc check` reports changes that break the theme or its privacy rules.
 
 [project]
-site_name = "ISCC Theme Demo"                                         # site
-site_description = "Demo and reference site for the ISCC Zensical theme" # site
+site_name = "ISCC Theme"                                              # site
+site_description = "Zensical theme, command and agent skills for ISCC documentation sites" # site
 site_author = "Titusz Pan"                                            # site
-site_url = "https://example.iscc.codes/"                              # site
+site_url = "https://theme.iscc.codes/"                                # site
 repo_url = "https://github.com/iscc/zensical-iscc"                    # site
 repo_name = "iscc/zensical-iscc"                                      # site
-edit_uri = "edit/main/demo/docs/"                                     # site: branch and docs path
+edit_uri = "edit/main/docs/"                                          # site: branch and docs path
 copyright = "<a href=\"https://iscc.io/foundation\">ISCC Foundation</a> | Documentation licensed under <a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a> | Copyright &copy; 2026 The Authors | <a href=\"https://iscc.io/privacy\">Privacy Policy</a> | <a href=\"https://iscc.io/imprint\">Imprint</a>"
 
 # Each page sets its navigation icon with `icon: lucide/<name>` in its front matter.
+# The last page in the navigation is "For Coding Agents".
 nav = [                                                               # site
     { "Home" = "index.md" },
+    { "Get started" = "get-started.md" },
+    { "Configuration" = "configuration.md" },
+    { "Writing pages" = "writing.md" },
     { "Components" = "components.md" },
+    { "Command line" = "command-line.md" },
+    { "Design" = "design.md" },
+    { "Development" = "development.md" },
+    { "Changelog" = "changelog.md" },
+    { "For Coding Agents" = "for-coding-agents.md" },
 ]
 
-# Options read by the theme's main.html. Plausible analytics are on by default and count
-# the site under the host name of site_url; `[project.extra.analytics] domain` overrides it.
+# Options for main.html of the theme. Plausible analytics are on by default. They count the
+# site under the host name of site_url. `[project.extra.analytics] domain` sets a different host.
 [project.extra.iscc]
 tagline = "Zensical theme for ISCC documentation" # site: home page title suffix
 copy_page = true                                  # "Copy page" button; needs `zensical-iscc build`
 chat = false                                      # iscc.ai chat widget; only on origins iscc.ai allows
-# product = "monitor"                             # site: header wordmark name; default: repo_name without iscc-
+product = "theme"                                 # site: header wordmark name; default: repo_name without iscc-
 
-# Related ISCC sites for the header's "Projects" menu, in display order. Every site should list
-# the sites its readers move between, the specification and itself; the entry linking to this
-# site's site_url is marked as the current site. Without entries there is no menu.
+# Related ISCC sites for the "Projects" menu in the header, in display order. List the sites
+# that your readers go to, the specification and the site itself. The entry that links to
+# site_url gets the marker for the current site. Without entries, the site has no menu.
 [[project.extra.iscc.related]]                                        # site
-name = "ISCC Theme Demo"
-link = "https://example.iscc.codes/"
-description = "Demo and reference site for the ISCC Zensical theme"
+name = "ISCC Theme"
+link = "https://theme.iscc.codes/"
+description = "Theme and tooling for ISCC documentation sites"
 
 [[project.extra.iscc.related]]                                        # site
 name = "ISCC Specification"
@@ -60,8 +70,8 @@ description = "Verifies and mirrors the transparency logs of ISCC hubs"
 icon = "fontawesome/brands/github"
 link = "https://github.com/iscc/zensical-iscc" # site
 
-# Fonts, palette, logo, favicon and the default features come from the theme.
-# Site-specific template overrides go into a `custom_dir` next to this setting.
+# The theme supplies the fonts, palette, logo, favicon and default features.
+# Put templates for this site only into a `custom_dir` next to this setting.
 [project.theme]
 name = "zensical_iscc"
 

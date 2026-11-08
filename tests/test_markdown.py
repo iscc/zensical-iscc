@@ -1,10 +1,10 @@
-"""Markdown copies of the pages and `llms-full.txt` beside the rendered site."""
+"""Markdown copies of the pages, `llms-full.txt` and the `llms.txt` index beside the rendered site."""
 
 from pathlib import Path
 
 from conftest import build
 
-from zensical_iscc import markdown
+from zensical_iscc import markdown, project
 
 
 def test_flatten_nav_follows_sections_in_order():
@@ -49,11 +49,66 @@ def test_ordered_sources_put_unlisted_pages_last():
     assert markdown.ordered_sources(sources, nav) == [Path("index.md"), Path("b.md"), Path("a.md")]
 
 
-def test_build_publishes_markdown_pages(demo_config):
-    site = build(demo_config)
-    home = (site / "index.md").read_text(encoding="utf-8")
-    components = (site / "components" / "index.md").read_text(encoding="utf-8")
-    assert home.startswith("# ISCC Theme Demo\n")
-    assert components.startswith("# Components\n")
-    full = (site / "llms-full.txt").read_text(encoding="utf-8")
-    assert full == home + "\n\n" + components
+def test_nav_titles_map_paths_to_labels():
+    nav = [{"Home": "index.md"}, {"Guide": ["guide/index.md", {"Setup": "guide/setup.md"}]}, "about.md"]
+    assert markdown.nav_titles(nav) == {"index.md": "Home", "guide/setup.md": "Setup"}
+
+
+def test_index_entry_titles_and_descriptions():
+    titles = {"setup.md": "Setup"}
+    text = "---\nicon: lucide/rocket\ndescription: 'Install it'\n---\n\n# Installing\n"
+    assert markdown.index_entry(Path("setup.md"), text, titles) == "- [Setup](setup/index.md): Install it"
+    assert markdown.index_entry(Path("guide/index.md"), text, {}) == "- [Installing](guide/index.md): Install it"
+    assert markdown.index_entry(Path("notes.md"), "Text only\n", {}) == "- [notes](notes/index.md)"
+
+
+def test_index_entry_encodes_link_destinations():
+    assert markdown.index_entry(Path("user)guide.md"), "# Guide\n", {}) == "- [Guide](user%29guide/index.md)"
+    assert markdown.index_entry(Path("a b/c#d.md"), "# CD\n", {}) == "- [CD](a%20b/c%23d/index.md)"
+
+
+def test_index_entry_escapes_link_text():
+    titles = {"setup.md": "Setup [beta]"}
+    assert markdown.index_entry(Path("setup.md"), "", titles) == r"- [Setup \[beta\]](setup/index.md)"
+    assert markdown.index_entry(Path("x.md"), "# A\\B ]\n", {}) == r"- [A\\B \]](x/index.md)"
+
+
+def test_description_parses_yaml():
+    assert markdown.description("---\ndescription: >-\n  Long text\n  over lines\n---\n# X\n") == "Long text over lines"
+    assert markdown.description("---\ndescription: 'It''s \"here\"'\n---\n") == 'It\'s "here"'
+    assert markdown.description("---\r\ndescription: Windows\r\n---\r\n") == "Windows"
+    assert markdown.description("---\ndescription: 42\n---\n") == "42"
+    assert markdown.description("---\nicon: lucide/x\n---\n") == ""
+    assert markdown.description("---\n- a list\n---\n") == ""
+    assert markdown.description("---\ndescription: [unclosed\n---\n") == ""
+    assert markdown.description("# No front matter\n") == ""
+
+
+def test_llms_index_without_agent_page_or_description():
+    pages = [(Path("index.md"), "# Home\n")]
+    assert markdown.llms_index({"site_name": "Site"}, pages) == (
+        "# Site\n\n## Pages\n\n- [Home](index.md)\n\n## Optional\n\n- [All pages in one file](llms-full.txt)\n"
+    )
+
+
+def test_agent_page():
+    assert markdown.agent_page([Path("index.md"), Path("dev/for-coding-agents.md")]) == Path("dev/for-coding-agents.md")
+    assert markdown.agent_page([Path("index.md")]) is None
+
+
+def test_build_publishes_markdown_pages(docs_config):
+    site = build(docs_config)
+    nav = markdown.flatten_nav(project.load_project(docs_config)["nav"])
+    copies = [markdown.output_path(site, Path(p)).read_text(encoding="utf-8") for p in nav]
+    assert copies[0].startswith("# ISCC Theme\n")
+    assert (site / "components" / "index.md").read_text(encoding="utf-8").startswith("# Components\n")
+    assert (site / "llms-full.txt").read_text(encoding="utf-8") == "\n\n".join(copies)
+
+
+def test_build_writes_llms_index_with_the_agent_page_first(docs_config):
+    lines = (build(docs_config) / "llms.txt").read_text(encoding="utf-8").splitlines()
+    assert lines[:3] == ["# ISCC Theme", "", "> Zensical theme, command and agent skills for ISCC documentation sites"]
+    first = lines.index("## For coding agents") + 2
+    assert lines[first].startswith("- [For Coding Agents](for-coding-agents/index.md): ")
+    assert "- [Components](components/index.md): " in "\n".join(lines)
+    assert sum("for-coding-agents" in line for line in lines) == 1

@@ -129,9 +129,9 @@ def test_related_findings_for_misshapen_tables():
     ]
 
 
-def test_check_reports_related_projects_from_the_configuration(demo_config):
-    edit_config(demo_config, 'link = "https://iscc.codes/"', 'link = "http://iscc.codes/"')
-    assert check.check(demo_config) == [
+def test_check_reports_related_projects_from_the_configuration(docs_config):
+    edit_config(docs_config, 'link = "https://iscc.codes/"', 'link = "http://iscc.codes/"')
+    assert check.check(docs_config) == [
         ("error", "related project ISCC Specification links to http://iscc.codes/; use an https:// URL"),
         ("warning", "the site is not built; run `zensical-iscc build` to check its pages"),
     ]
@@ -196,39 +196,60 @@ def test_markdown_findings(tmp_path):
     (tmp_path / "index.md").write_text("# Home\n", encoding="utf-8")
     assert len(check.markdown_findings(tmp_path, sources)) == 1
     (tmp_path / "llms-full.txt").write_text("# Home\n", encoding="utf-8")
+    assert len(check.markdown_findings(tmp_path, sources)) == 1
+    (tmp_path / "llms.txt").write_text("# Home\n", encoding="utf-8")
     assert check.markdown_findings(tmp_path, sources) == []
 
 
-def test_check_before_build_reports_configuration_only(demo_config):
-    assert messages(check.check(demo_config)) == [
+def test_agent_page_findings():
+    page = [Path("index.md"), Path("for-coding-agents.md")]
+    nav = [{"Home": "index.md"}, {"For Coding Agents": "for-coding-agents.md"}]
+    assert check.agent_page_findings(page, nav) == []
+    assert check.agent_page_findings(page, []) == []
+    assert messages(check.agent_page_findings([Path("index.md")], nav)) == [
+        ("warning", "add docs/for-coding-agents.md")
+    ]
+    assert check.agent_page_findings(page, nav[:1]) == [
+        ("warning", 'list for-coding-agents.md in `nav` as { "For Coding Agents" = "for-coding-agents.md" }')
+    ]
+
+
+def test_check_finds_a_missing_agent_page(docs_config):
+    (docs_config.parent / "docs" / "for-coding-agents.md").unlink()
+    edit_config(docs_config, '    { "For Coding Agents" = "for-coding-agents.md" },\n', "")
+    assert messages(check.check(docs_config))[0] == ("warning", "add docs/for-coding-agents.md")
+
+
+def test_check_before_build_reports_configuration_only(docs_config):
+    assert messages(check.check(docs_config)) == [
         ("warning", "the site is not built; run `zensical-iscc build` to check its pages")
     ]
 
 
-def test_check_finds_foreign_images_in_pages(demo_config):
-    docs = demo_config.parent / "docs"
+def test_check_finds_foreign_images_in_pages(docs_config):
+    docs = docs_config.parent / "docs"
     (docs / "badges.md").write_text(
         "# Badges\n\n![PyPI](https://img.shields.io/pypi/v/iscc-core.svg)\n", encoding="utf-8"
     )
-    build(demo_config)
-    assert check.check(demo_config) == [
+    build(docs_config)
+    assert check.check(docs_config) == [
         ("error", "badges/index.html loads https://img.shields.io/pypi/v/iscc-core.svg")
     ]
 
 
-def test_check_finds_missing_markdown_pages(demo_config):
-    site = build(demo_config)
+def test_check_finds_missing_markdown_pages(docs_config):
+    site = build(docs_config)
     (site / "components" / "index.md").unlink()
-    assert messages(check.check(demo_config)) == [
+    assert messages(check.check(docs_config)) == [
         ("error", "Markdown pages are missing from the site; build with `zensical-iscc build`")
     ]
 
 
-def test_check_finds_vendored_theme(demo_config):
-    vendored = demo_config.parent / "zensical_iscc" / "assets" / "iscc"
+def test_check_finds_vendored_theme(docs_config):
+    vendored = docs_config.parent / "zensical_iscc" / "assets" / "iscc"
     vendored.mkdir(parents=True)
     (vendored / "theme.css").write_text("", encoding="utf-8")
-    edit_config(demo_config, 'name = "zensical_iscc"', 'custom_dir = "zensical_iscc"')
-    findings = check.check(demo_config)
+    edit_config(docs_config, 'name = "zensical_iscc"', 'custom_dir = "zensical_iscc"')
+    findings = check.check(docs_config)
     assert [level for level, _ in findings][:2] == ["error", "error"]
     assert "holds a copy of the ISCC theme" in findings[1][1]

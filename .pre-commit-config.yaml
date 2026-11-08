@@ -1,6 +1,6 @@
 # Git hooks, run by prek (https://github.com/j178/prek): `uv run prek install` once, then on every commit.
 # `uv run prek run --all-files` checks the whole tree. CI runs the same hooks.
-# Brand assets and GLightbox stay byte-identical to their sources (brand kit, iscc-io, GLightbox release).
+# Brand assets and GLightbox stay byte-identical to their sources (ISCC brand assets, GLightbox release).
 exclude: ^zensical_iscc/theme/assets/iscc/((tokens|fonts|logos|vendor)/|.*\.(svg|png|ico)$)
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -31,7 +31,7 @@ repos:
     rev: 1.0.0
     hooks:
       - id: mdformat
-        files: ^(README|CLAUDE)\.md$|^skills/.*\.md$
+        files: ^(README|CLAUDE|CHANGELOG)\.md$|^skills/iscc-docs-theme/.*\.md$
         additional_dependencies:
           - "mdformat-mkdocs[recommended]>=5.3.0"
 
@@ -47,6 +47,12 @@ repos:
 
   - repo: local
     hooks:
+      - id: changelog
+        name: copy CHANGELOG.md to docs/changelog.md
+        entry: uv run python scripts/sync_changelog.py
+        language: system
+        files: ^(CHANGELOG|docs/changelog)\.md$
+        pass_filenames: false
       - id: pyright
         name: pyright
         entry: uv run pyright

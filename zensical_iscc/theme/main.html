@@ -2,7 +2,8 @@
   ISCC theme entry template.
 
   Extends the Zensical base template with brand stylesheets, social metadata,
-  optional client-side redirects, a self-hosted GLightbox and the theme's page
+  a link to each page's Markdown copy for agents, optional client-side
+  redirects, a self-hosted GLightbox and the theme's page
   widgets (copy page, chat). Every request stays on the site's own origin
   except Plausible analytics and, with chat enabled, iscc.ai. Site-specific
   behaviour is driven by `[project.extra.iscc]`:
@@ -59,6 +60,10 @@
 {% block extrahead %}
   <link rel="alternate icon" href="{{ 'assets/iscc/favicon.ico' | url }}" sizes="16x16 32x32 48x48">
   <link rel="apple-touch-icon" href="{{ 'assets/iscc/apple-touch-icon.png' | url }}">
+  {#- The page's Markdown copy from `zensical-iscc build`, for agents; the 404 page has none -#}
+  {% if page.title %}
+  <link rel="alternate" type="text/markdown" href="{{ (page.url ~ 'index.md') | url }}">
+  {% endif %}
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="{{ config.site_name }}">
   {% if is_home %}

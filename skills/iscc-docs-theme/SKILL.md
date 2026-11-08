@@ -8,14 +8,19 @@ description: Set up, migrate, upgrade or check the ISCC documentation theme (zen
 The goal is a documentation site built by Zensical with the `zensical-iscc` package that passes
 `zensical-iscc check --strict` and is built, checked and deployed by CI.
 
-The theme repository is <https://github.com/iscc/zensical-iscc>; ISCC checkouts usually sit next to each other, so
-look for `../zensical-iscc` first. Files referenced here, relative to that repository:
+The theme repository is <https://github.com/iscc/zensical-iscc>; read the files from a local checkout of it if
+there is one. Its documentation is published at <https://theme.iscc.codes/> (all pages in one
+file: <https://theme.iscc.codes/llms-full.txt>). Files referenced here, relative to that repository:
 
-| File                                       | Use                                                              |
-| ------------------------------------------ | ---------------------------------------------------------------- |
-| `demo/zensical.toml`                       | Reference configuration; values marked `# site` are per site     |
-| `README.md`                                | Theme options, design rules, third-party requests and known gaps |
-| `skills/iscc-docs-theme/docs-workflow.yml` | GitHub Actions template: build, check, deploy to GitHub Pages    |
+| File                                       | Use                                                                 |
+| ------------------------------------------ | ------------------------------------------------------------------- |
+| `zensical.toml`                            | Reference configuration; values marked `# site` are per site        |
+| `docs/configuration.md`                    | Every setting and option, the product wordmark, the "Projects" menu |
+| `docs/writing.md`                          | Page conventions: front matter, icons, the For Coding Agents page   |
+| `docs/components.md`                       | The CSS classes the theme styles                                    |
+| `docs/command-line.md`                     | Commands, build outputs, every check finding, third-party requests  |
+| `skills/iscc-docs-theme/docs-workflow.yml` | GitHub Actions template: build, check, deploy to GitHub Pages       |
+| `skills/docs-for-agents/SKILL.md`          | Skill that writes the site's For Coding Agents page                 |
 
 The project needs Python 3.11 or newer.
 
@@ -34,12 +39,13 @@ Read before changing anything and note what you find:
 - **Analytics domain**: the `data-domain` of the old Plausible snippet. The theme counts visits under the host
     name of `site_url`; note the old domain only if it differs.
 - **Styling**: `extra_css` and `extra_javascript`. Rules that restyle fonts, colours or the logo go, and so do
-    the lead paragraph, call-to-action and card styles that the theme provides (see its README, "Page
-    components"); other component styles stay.
+    the lead paragraph, call-to-action and card styles that the theme provides (see `docs/components.md`); other
+    component styles stay.
 - **Third-party content**: hot-linked images and badges (shields.io and the like), web fonts, scripts from CDNs.
 - **Mermaid**: `custom_fences` with `mermaid`, or fenced `mermaid` blocks in the docs.
 - **Plugins**: mkdocstrings, glightbox, redirects and others; keep the ones Zensical supports.
 - **Deployment**: the docs workflow, GitHub Pages, `docs/CNAME`, and the published URL.
+- **Agent docs**: an existing page for coding agents, an `AGENTS.md` or `CLAUDE.md`, and an `llms.txt` generator.
 - **Related ISCC sites**: links to other ISCC sites in `nav`, the README or the home page, and the services the
     project calls or serves. They are the candidates for the "Projects" menu.
 
@@ -56,7 +62,7 @@ Ask in one message, with your recommendation for each:
     not keep them without a decision.
 - Anything in the survey that looks site-specific but would also suit other ISCC sites: it may belong in the theme.
 
-Do not ask about settings that `demo/zensical.toml` already settles.
+Do not ask about settings that the reference `zensical.toml` already settles.
 
 ## 3. Add the dependency
 
@@ -82,7 +88,7 @@ Then run `uv lock` and `uv sync`. Without uv:
 
 ## 4. Configure zensical.toml
 
-Start from `demo/zensical.toml`: replace every value marked `# site`, then carry over the project's own `nav`,
+Start from the theme's `zensical.toml`: replace every value marked `# site`, then carry over the project's own `nav`,
 Markdown extensions and plugins. The rules that matter:
 
 | Setting                              | Rule                                                                               |
@@ -97,13 +103,14 @@ Markdown extensions and plugins. The rules that matter:
 | `product` in `[project.extra.iscc]`  | Leave unset when `repo_name` minus `iscc-` is the product name; else set it        |
 | `[[project.extra.iscc.related]]`     | One table per related site, this one included: `name`, https `link`, `description` |
 | `[project.extra.analytics]`          | Leave unset: Plausible counts the host of `site_url`; set `domain` if it differs   |
-| `copyright`                          | The ISCC footer from the demo, with the project's years                            |
+| `copyright`                          | The ISCC footer from the reference, with the project's years                       |
+| `nav`                                | Ends with `{ "For Coding Agents" = "for-coding-agents.md" }`                       |
 
 Two TOML traps:
 
 - Keep `nav = [...]` directly under `[project]`, before any subtable such as `[project.extra.iscc]` or
     `[[project.extra.social]]`; after a table header TOML scopes it into that table.
-- Listing any Markdown extension replaces Zensical's default set, so the list must be complete. The demo's list is
+- Listing any Markdown extension replaces Zensical's default set, so the list must be complete. The reference list is
     the baseline; add the project's extras to it.
 
 Every page gets a navigation icon: `icon: lucide/<name>` in its front matter, a name from
@@ -127,11 +134,27 @@ extension options become tables, see <https://zensical.org/docs/setup/basics/>),
 Never edit theme files inside a site. A change the site needs from the theme goes into the theme repository and a
 new release tag.
 
-## 6. Build commands
+## 6. Write the For Coding Agents page
+
+Every ISCC site ends its navigation with `docs/for-coding-agents.md`, a dense reference for agents that work on the
+project or integrate with it. Write it with the `docs-for-agents` skill of the same plugin
+(`/zensical-iscc:docs-for-agents create`); without the plugin, follow `skills/docs-for-agents/SKILL.md` of the
+theme repository. Give it `icon: lucide/bot` and a `description`, and fold an existing agent page into it.
+
+Add this line to the project's `CLAUDE.md` or `AGENTS.md`, creating the file if needed, so later sessions keep the
+page current:
+
+```markdown
+After changing the public API, CLI or configuration, run the docs-for-agents skill with `update`.
+```
+
+`zensical-iscc check` warns while the page is missing or not in `nav`.
+
+## 7. Build commands
 
 | Task    | Command                                                                            |
 | ------- | ---------------------------------------------------------------------------------- |
-| Build   | `zensical-iscc build` (Zensical build plus the Markdown copies for "Copy page")    |
+| Build   | `zensical-iscc build` (Zensical build, Markdown copies, `llms.txt`, wordmark)      |
 | Check   | `zensical-iscc check --strict`                                                     |
 | Preview | `zensical serve --dev-addr 127.0.0.1:<port>`; keep a port the project already uses |
 
@@ -139,21 +162,22 @@ new release tag.
 tasks or Makefile, and the docs commands in `README.md` and `CLAUDE.md`. Both commands read `zensical.toml` in the
 working directory; pass `--config-file` for another location.
 
-## 7. CI
+## 8. CI
 
 Copy `docs-workflow.yml` to `.github/workflows/docs.yml`, or add its build and check steps to the existing docs
 workflow. Keep the project's deployment target and its newer action pins. Trigger on `pyproject.toml` and `uv.lock`
 too, so a theme bump rebuilds the site.
 
-## 8. Verify
+## 9. Verify
 
 1. `uv run zensical-iscc build` and `uv run zensical-iscc check --strict` end with `0 errors, 0 warnings`. Explain
     any warning you leave to the human.
 1. Serve the built `site/` directory (for example `python -m http.server <port> --directory site`) and look at the
     home page and one inner page in the light and the dark scheme: the product wordmark lockup in the header
     (for example "ISCC | monitor."), Readex Pro headings, "Copy page" button, an icon in front of every page in
-    the navigation, the "Projects" menu with this site marked. `zensical serve` shows the plain ISCC
-    logo instead of the lockup; only the built site has it.
+    the navigation, the "Projects" menu with this site marked, "For Coding Agents" last in the navigation.
+    `zensical serve` shows the plain ISCC logo instead of the lockup; only the built site has it.
+1. `site/llms.txt` lists the For Coding Agents page first.
 1. If the host of `site_url` is new to Plausible, tell the human to add it at stats.iscc.codes; until then
     visits are not counted.
 1. Search the repository for leftovers: `zensical_iscc/`, `gen_markdown_pages`, `mkdocs`, old logo file names.
@@ -162,12 +186,14 @@ too, so a theme bump rebuilds the site.
 
 Change the `tag` in `[tool.uv.sources]`, run `uv lock --upgrade-package zensical-iscc`, then build and check. The
 release notes on GitHub say what changed and which Zensical version the release pins. If the site has no
-`[[project.extra.iscc.related]]` entries yet, propose the "Projects" menu as in step 2.
+`[[project.extra.iscc.related]]` entries yet, propose the "Projects" menu as in step 2; if it has no For Coding
+Agents page yet, write it as in step 6.
 
 ## Rules
 
 - Pages load nothing from other origins except Plausible (`stats.iscc.codes`) and, with chat on, `iscc.ai`.
-    `zensical-iscc check` enforces this for the built HTML and CSS. The README lists the requests it cannot see.
+    `zensical-iscc check` enforces this for the built HTML and CSS. `docs/command-line.md` lists the requests it
+    cannot see.
 - No Mermaid until the theme serves it.
 - No `navigation.instant`: lightbox pages would then load GLightbox from unpkg.com.
-- `README.md` of the theme documents `[project.extra.iscc]` and the CSS classes for ISCC-UNIT labels.
+- The theme's `docs/` documents `[project.extra.iscc]` and the CSS classes for ISCC-UNIT labels.
