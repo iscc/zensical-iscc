@@ -28,8 +28,8 @@ uv run poe docs          # build the docs site and serve it on 127.0.0.1:45472
 - `zensical_iscc/theme/` - the theme directory Zensical loads; no Python files here, Zensical copies everything
     that is not a template into the built site
 - `zensical_iscc/__init__.py` - `THEME`, the object the `mkdocs.themes` entry point names
-- `zensical_iscc/cli.py`, `markdown.py`, `check.py`, `project.py`, `wordmark.py` - the `zensical-iscc` command;
-    `wordmark.py` draws the product lockup and must match `tests/fixtures/products/` byte for byte
+- `zensical_iscc/cli.py`, `markdown.py`, `check.py`, `project.py`, `project_logo.py` - the `zensical-iscc` command;
+    `project_logo.py` draws the project logo and must match `tests/fixtures/project-logos/` byte for byte
 - `zensical.toml`, `docs/` - theme.iscc.codes and the reference configuration for sites; tests build copies of it
 - `CHANGELOG.md` - release notes; the `changelog` git hook (`scripts/sync_changelog.py`) copies it to
     `docs/changelog.md`, so edit only the root file and commit the copy

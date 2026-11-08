@@ -10,7 +10,7 @@ directory. To use a different file, add `--config-file` (`-f`).
 
 | Command                         | Does                                                                                 |
 | ------------------------------- | ------------------------------------------------------------------------------------ |
-| `zensical-iscc build`           | Runs `zensical build --clean`, then writes the Markdown copies, `llms.txt` and the product wordmark |
+| `zensical-iscc build`           | Runs `zensical build --clean`, then writes the Markdown copies, `llms.txt` and the project logo |
 | `zensical-iscc markdown`        | Writes the Markdown copies and `llms.txt` into a site that is already built          |
 | `zensical-iscc check`           | Checks the configuration and the built site. Exits with 1 on errors                  |
 | `zensical-iscc check --strict`  | Also exits with 1 on warnings. Use this mode in CI                                   |
@@ -25,7 +25,7 @@ Zensical has no plugins for steps after the build, so use `zensical-iscc build` 
 | `site/<page>/index.md`         | The Markdown of each page, without front matter            | "Copy page", "View as Markdown", agents |
 | `site/llms-full.txt`           | All pages, in navigation order                             | Language models that read a full site   |
 | `site/llms.txt`                | The title, link and description of each page, agent page first | Agents that look for a start page   |
-| `site/assets/iscc/product.svg` | The product name and the ISCC wordmark construction rules    | The header                            |
+| `site/assets/iscc/project-logo.svg` | The project name and the ISCC project logo construction rules    | The header                            |
 
 ## Findings
 
@@ -42,14 +42,14 @@ site. It cannot see the requests that the Zensical bundle makes in the browser.
 | `remove the navigation.instant feature`                    | Remove it. It makes lightbox pages load GLightbox from unpkg.com     |
 | `custom_dir … holds a copy of the ISCC theme`              | Delete the copy. Add the package as a dependency                     |
 | `main.html replaces the theme's main.html`                 | Delete it. Page templates can extend `main.html`                     |
-| `product … use lowercase words and hyphens, without iscc-` | Correct `product` in `[project.extra.iscc]`                          |
+| `project … use lowercase words and hyphens, without iscc-` | Correct `project` in `[project.extra.iscc]`                          |
 | `related project … lacks …` or `… use an https:// URL`     | Add the missing field. Use an https link                             |
 | `write related projects as [[project.extra.iscc.related]] tables` | Use double brackets                                           |
 | `extra_css / extra_javascript loads …`                     | Put a copy in the docs directory                                     |
 | `<page> loads <url>`                                       | Put the image, script or stylesheet in `docs/`                       |
 | `<page> has a Mermaid diagram`                             | Replace the diagram with an SVG file                                 |
 | `Markdown pages are missing from the site`                 | Build with `zensical-iscc build`, not with `zensical build`          |
-| `the product wordmark is missing from the site`            | Build with `zensical-iscc build`                                     |
+| `the project logo is missing from the site`            | Build with `zensical-iscc build`                                     |
 
 ### Warnings
 
@@ -59,7 +59,8 @@ site. It cannot see the requests that the Zensical bundle makes in the browser.
 | `set site_url`                                             | Link previews, canonical URLs and analytics need it                  |
 | `set edit_uri`                                             | The Zensical default edit links point to a `master` branch           |
 | `set tagline in [project.extra.iscc]`                      | It is the second part of the home page title                         |
-| `set product in [project.extra.iscc] or repo_name`         | Without a name, the header has no product wordmark                   |
+| `set project in [project.extra.iscc] or repo_name`         | Without a name, the header has no project logo                   |
+| `set copyright to plain text`                              | The footer already links the ISCC Foundation, privacy policy, imprint and license |
 | `add docs/for-coding-agents.md`                            | Write it with the `docs-for-agents` skill. See [Writing pages](writing.md#for-coding-agents) |
 | `list for-coding-agents.md in nav`                         | Add `{ "For Coding Agents" = "for-coding-agents.md" }` as the last entry |
 | `[project.extra.analytics] replaces Plausible`             | All ISCC sites use Plausible                                         |

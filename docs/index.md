@@ -29,7 +29,7 @@ the reference configuration for all ISCC sites.
 
 ### Brand
 
-The ISCC fonts, colors and logos on the modern Zensical design. The header shows the product name next to the ISCC
+The ISCC fonts, colors and logos on the modern Zensical design. The header shows the project name next to the ISCC
 logo.
 
 [Design →](design.md)

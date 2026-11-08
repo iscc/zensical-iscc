@@ -89,7 +89,7 @@ styles.
 | Preview | `python -m http.server <port> --directory site` after a build               |
 | Draft   | `uv run zensical serve --dev-addr 127.0.0.1:<port>` for live reload         |
 
-`zensical serve` does not run the build steps of the theme. Its preview has no product wordmark, no "Copy page"
+`zensical serve` does not run the build steps of the theme. Its preview has no project logo, no "Copy page"
 content and no `llms.txt`. To see the real site, serve the built `site/` directory.
 
 ### 5. Deploy

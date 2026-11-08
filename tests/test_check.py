@@ -71,11 +71,13 @@ def test_metadata_findings():
     }
     complete["extra"] = {"iscc": {"tagline": "X"}}
     assert check.metadata_findings(complete) == []
-    findings = check.metadata_findings({"repo_url": "https://github.com/iscc/x"})
+    assert check.metadata_findings({**complete, "copyright": "Copyright © 2026 The Authors"}) == []
+    findings = check.metadata_findings({"repo_url": "https://github.com/iscc/x", "copyright": '<a href="x">X</a>'})
     assert messages(findings) == [
         ("warning", "set `site_url`"),
         ("warning", 'set `edit_uri` (for example "edit/main/docs/")'),
         ("warning", "set `tagline` in [project.extra.iscc]"),
+        ("warning", 'set `copyright` to plain text, such as "Copyright © 2026 The Authors"'),
     ]
 
 

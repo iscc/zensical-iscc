@@ -1,7 +1,7 @@
 /* ISCC theme for Zensical: maps the identity tokens from iscc.css onto the
  * Material/Zensical variables and styles the components the tokens do not
  * reach. Light scheme is the paper canvas; the slate scheme is near-black
- * with navy code fields. Coral marks calls to action, the active navigation
+ * with raised graphite fields and code blocks. Coral marks calls to action, the active navigation
  * marker, text selection and the logo circle; blue marks links. */
 
 /* ---------- Fonts ---------- */
@@ -58,9 +58,9 @@
 
   --md-footer-bg-color: var(--iscc-ink);
   --md-footer-bg-color--dark: var(--iscc-ink);
-  --md-footer-fg-color: var(--iscc-paper);
-  --md-footer-fg-color--light: #f8f9fab3;
-  --md-footer-fg-color--lighter: #f8f9fa73;
+  --md-footer-fg-color: #ffffff;
+  --md-footer-fg-color--light: #ffffffc7;
+  --md-footer-fg-color--lighter: #ffffff73;
 
   --md-shadow-z1: 0 0 0 1px var(--iscc-rule);
   --md-shadow-z2: 0 0.2rem 0.5rem #2125291f, 0 0 0 1px var(--iscc-rule);
@@ -123,10 +123,10 @@
   --md-admonition-fg-color: var(--md-default-fg-color);
   --md-admonition-bg-color: transparent;
   --md-footer-bg-color: var(--iscc-ink);
-  --md-footer-bg-color--dark: #16181b;
-  --md-footer-fg-color: var(--iscc-paper);
-  --md-footer-fg-color--light: #f8f9fab3;
-  --md-footer-fg-color--lighter: #f8f9fa73;
+  --md-footer-bg-color--dark: var(--iscc-ink);
+  --md-footer-fg-color: #ffffff;
+  --md-footer-fg-color--light: #ffffffc7;
+  --md-footer-fg-color--lighter: #ffffff73;
 
   --md-shadow-z1: 0 0 0 1px #f8f9fa1f;
   --md-shadow-z2: 0 0.2rem 0.5rem #00000059, 0 0 0 1px #f8f9fa1f;
@@ -134,7 +134,7 @@
 
   --iscc-rule: #f8f9fa29;
   --iscc-field: #2b3035;
-  --iscc-code-block-bg: var(--iscc-navy);
+  --iscc-code-block-bg: var(--iscc-field);
   --iscc-code-block-fg: var(--iscc-paper);
   color-scheme: dark;
 }
@@ -311,9 +311,6 @@ html {
   border-radius: 0 0 0.2rem 0.2rem;
 }
 
-[data-md-color-scheme="slate"] .md-typeset pre > code {
-  border-color: transparent;
-}
 
 [data-md-color-scheme="slate"] .md-typeset pre a,
 [data-md-color-scheme="slate"] .md-typeset pre a:hover {
@@ -321,8 +318,7 @@ html {
 }
 
 [data-md-color-scheme="slate"] .md-typeset .highlight span.filename {
-  border-color: transparent;
-  color: var(--iscc-cyan);
+  color: var(--md-default-fg-color--light);
 }
 
 .md-clipboard {
@@ -653,12 +649,13 @@ html {
 /* ---------- Header ---------- */
 
 /* A Deep Navy bar with grain in both schemes, with quiet white controls
- * (78% white, 8.6:1 on navy). It leads with the ISCC product wordmark lockup in white/coral, written by
+ * (78% white, 8.6:1 on navy). It leads with the ISCC project logo in white/coral, written by
  * `zensical-iscc build`; without it, and on phones, the plain signature and
  * the site name in spaced Light capitals take its place. The bar is 64px
- * high, and its content shares the body's edges: the logo starts at the
- * navigation's left edge and the repository widget ends where the content
- * column ends. */
+ * high, and its content sits on the columns below: the logo starts on the
+ * coral marker of the navigation, the search field ends with the content
+ * column, and the repository widget spans the table of contents, its icon
+ * above the contents' text. */
 :root {
   --iscc-header-height: 3.2rem;
 }
@@ -684,9 +681,10 @@ html {
   padding: 0 0.8rem;
 }
 
+/* 0.2rem is the inset of the navigation links, where the coral marker sits */
 @media screen and (min-width: 76.25em) {
   .md-header__inner {
-    padding-left: 0;
+    padding-left: 0.2rem;
   }
 }
 
@@ -751,26 +749,26 @@ html {
   }
 }
 
-/* The product lockup, sized by its own file so that 1 h is 30px, from 720px
+/* The project logo, sized by its own file so that 1 h is 30px, from 720px
  * up; below that it would crowd the menu button, so the signature stands in.
  * The drawer always shows the signature. */
-.md-logo img.iscc-product,
-.md-nav .md-nav__title[for="__drawer"] .md-logo img.iscc-product {
+.md-logo img.iscc-project-logo,
+.md-nav .md-nav__title[for="__drawer"] .md-logo img.iscc-project-logo {
   display: none;
 }
 
 @media screen and (min-width: 45em) {
-  .md-header__button.md-logo img.iscc-product {
+  .md-header__button.md-logo img.iscc-project-logo {
     display: block;
     height: auto;
   }
 
-  .md-header__button.md-logo:has(.iscc-product) img.iscc-logo {
+  .md-header__button.md-logo:has(.iscc-project-logo) img.iscc-logo {
     display: none;
   }
 
-  /* The lockup names the product; the page title still replaces it on scroll */
-  .md-header__inner:has(.iscc-product) .md-header__topic:first-child {
+  /* The project logo names the project; the page title still replaces it on scroll */
+  .md-header__inner:has(.iscc-project-logo) .md-header__topic:first-child {
     visibility: hidden;
   }
 }
@@ -791,16 +789,16 @@ html {
   outline-color: var(--iscc-on-dark);
 }
 
-/* The repository widget takes its content's width, so its text ends at the bar's edge */
+/* The repository widget takes the width of the table of contents column
+ * (12.1rem) less the column's 0.2rem inset and the bar's 0.8rem padding.
+ * Zensical's margin before it (1rem, 1.4rem from 76.25em) equals the gutter
+ * between content and contents plus that inset, so the search field ends
+ * where the content column ends. */
 @media screen and (min-width: 60em) {
   .md-header__source {
-    width: auto;
+    width: 11.1rem;
     max-width: none;
     margin-right: 0;
-  }
-
-  .md-header__source .md-source__repository {
-    max-width: 9rem;
   }
 }
 
@@ -1151,8 +1149,16 @@ html {
 
 /* ---------- Content column ---------- */
 
+/* The first lines of the three columns share one line: the cap tops of the
+ * page title, the first navigation link and the contents label. */
 .md-content__inner {
-  padding-top: 1.4rem;
+  padding-top: 0.95rem;
+}
+
+@media screen and (min-width: 60em) {
+  .md-sidebar--secondary .md-nav--secondary > .md-nav__title {
+    padding-top: 0.4rem;
+  }
 }
 
 .md-content__button {
@@ -1187,33 +1193,162 @@ html {
   font-weight: 400;
 }
 
+/* The footer bar closes the page in near-black in both schemes, the brand's
+ * dark ground for the end of a page, while navy marks the header. It sits on
+ * the page columns: the white/coral symbol in the navigation column, the links
+ * that all ISCC sites share (partials/copyright.html) and a quiet line with
+ * the site's copyright text in the content column, the social links in the
+ * contents column. The symbol's top and the links' cap tops share one line.
+ * Text is 78% white (9.9:1 on near-black), the last line 65% white (7.3:1).
+ * Spacing follows the brand's 8px rhythm. */
 .md-footer-meta {
   background-color: var(--md-footer-bg-color);
+}
+
+[data-md-color-scheme="slate"] .md-footer-meta {
+  box-shadow: inset 0 1px 0 var(--iscc-rule);
+}
+
+/* The symbol, the links, the last line and the social links are cells of
+ * one grid; the wrapper from partials/copyright.html steps aside. */
+.md-footer-meta__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "logo social"
+    "links links"
+    "meta meta";
+  align-items: start;
+  gap: 1.2rem;
+  padding: 2.4rem 0.8rem;
+}
+
+html .md-footer-meta .iscc-footer {
+  display: contents;
+  font-size: 0.7rem;
+  line-height: 1rem;
   color: var(--md-footer-fg-color--light);
 }
 
-.md-footer-meta.md-typeset {
-  font-size: 0.65rem;
+/* The symbol's file holds clear space of 25 of its 212.5 units on each side;
+ * the negative margins put the visible edges on the column edge and, 0.25rem
+ * down, on the cap line of the links (14px type in a 20px line). */
+.iscc-footer__logo {
+  --iscc-footer-symbol: 2.1rem;
+  --iscc-footer-clear: calc(var(--iscc-footer-symbol) * -25 / 212.5);
+  grid-area: logo;
+  justify-self: start;
+  margin: calc(0.25rem + var(--iscc-footer-clear)) var(--iscc-footer-clear) var(--iscc-footer-clear);
+  line-height: 0;
 }
 
-.md-copyright,
-.md-copyright__highlight {
-  color: var(--md-footer-fg-color--light);
+.iscc-footer__logo img {
+  display: block;
+  width: var(--iscc-footer-symbol);
+  height: var(--iscc-footer-symbol);
+}
+
+.iscc-footer__links {
+  grid-area: links;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.6rem;
+}
+
+html .md-footer-meta .iscc-footer__meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1.2rem;
+  margin: 0;
+  padding-top: 0.8rem;
+  border-top: 1px solid #ffffff26;
+  font-size: 0.6rem;
+  line-height: 0.8rem;
+  color: #ffffffa6;
+}
+
+/* The icons' tops on the links' cap line; Zensical centres them in 1.6rem boxes */
+.md-footer-meta .md-social {
+  grid-area: social;
+  display: flex;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0.25rem 0 0;
+}
+
+.md-footer-meta .md-social__link {
+  display: block;
+  width: auto;
+  height: auto;
+}
+
+.md-footer-meta .md-social__link svg {
+  display: block;
+  width: 0.8rem;
+  height: 0.8rem;
+  max-height: none;
+}
+
+/* Beside the table of contents, the social links take its column and start
+ * at its text; the links and the last line keep to the content column */
+@media screen and (min-width: 60em) {
+  .md-footer-meta__inner {
+    grid-template-columns: minmax(0, 1fr) 12.1rem;
+    grid-template-areas:
+      "logo social"
+      "links ."
+      "meta .";
+    column-gap: 0;
+    padding-right: 0;
+  }
+
+  .iscc-footer__links,
+  html .md-footer-meta .iscc-footer__meta {
+    margin-right: 0.8rem;
+  }
+
+  .md-footer-meta .md-social {
+    padding-left: 0.8rem;
+  }
+}
+
+/* Beside the navigation, the symbol takes the navigation column, and the
+ * links and the last line start at the content's left edge */
+@media screen and (min-width: 76.25em) {
+  .md-footer-meta__inner {
+    grid-template-columns: 11.9rem minmax(0, 1fr) 12.1rem;
+    grid-template-areas:
+      "logo links social"
+      "logo meta .";
+    padding-left: 0.2rem;
+  }
+
+  .iscc-footer__links,
+  html .md-footer-meta .iscc-footer__meta {
+    margin-left: 1.2rem;
+    margin-right: 1.2rem;
+  }
 }
 
 /* Zensical colours footer links with `a:not(:focus, :hover)`, whose :not()
  * adds a pseudo-class's weight, so the theme matches that selector. Links are
- * paper white on the near-black footer, underlined in 45% white. */
+ * white without underline; hover and focus turn them cyan and underline them. */
 html .md-footer-meta.md-typeset a,
 html .md-footer-meta.md-typeset a:not(:focus, :hover) {
   color: var(--md-footer-fg-color);
-  text-decoration-color: var(--md-footer-fg-color--lighter);
+  text-decoration: none;
+}
+
+html .md-footer-meta.md-typeset .iscc-footer__meta a:not(:focus, :hover) {
+  color: inherit;
 }
 
 html .md-footer-meta.md-typeset a:focus,
 html .md-footer-meta.md-typeset a:hover {
   color: var(--iscc-cyan);
-  text-decoration-color: currentColor;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 .md-social__link svg {
@@ -1223,10 +1358,6 @@ html .md-footer-meta.md-typeset a:hover {
 .md-social__link:hover svg,
 .md-social__link:focus svg {
   fill: var(--md-footer-fg-color);
-}
-
-[data-md-color-scheme="slate"] .md-footer-meta {
-  border-top: 1px solid var(--iscc-rule);
 }
 
 /* ---------- Back to top ---------- */
@@ -1273,10 +1404,11 @@ html .md-footer-meta.md-typeset a:hover {
   min-width: 0;
 }
 
+/* Centred on the cap height of the page title */
 .copy-page {
   flex-shrink: 0;
   position: relative;
-  margin-top: 0.35rem;
+  margin-top: 0.175rem;
   z-index: 2;
 }
 

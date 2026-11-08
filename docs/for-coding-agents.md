@@ -16,11 +16,11 @@ both. Full Markdown of this site: [`llms-full.txt`](https://theme.iscc.codes/llm
 | Path                                         | Contains                                                                                   |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `zensical_iscc/__init__.py`                  | `THEME_DIR`; `THEME`, a `SimpleNamespace` whose `__file__` lies in `theme/`                |
-| `zensical_iscc/cli.py`                       | `main(argv)`, `run_build`, `run_markdown`, `run_wordmark`, `run_check`                     |
+| `zensical_iscc/cli.py`                       | `main(argv)`, `run_build`, `run_markdown`, `run_project_logo`, `run_check`                     |
 | `zensical_iscc/project.py`                   | `load_project`, `docs_dir`, `site_dir`, `custom_dir`, `resolve_dir`                        |
 | `zensical_iscc/markdown.py`                  | Markdown copies, `llms-full.txt`, `llms.txt`; `AGENT_PAGE`, `agent_page`, `flatten_nav`     |
 | `zensical_iscc/check.py`                     | `check(config_path)` and one `*_findings` function per rule                               |
-| `zensical_iscc/wordmark.py`                  | `compose`, `write`, `product_name`, `is_valid`; port of the ISCC wordmark construction     |
+| `zensical_iscc/project_logo.py`                  | `compose`, `write`, `project_name`, `is_valid`; port of the ISCC project logo construction     |
 | `zensical_iscc/theme/`                       | The theme directory Zensical loads; templates, partials, `assets/iscc/`; no Python        |
 | `zensical.toml`, `docs/`                     | theme.iscc.codes and the reference configuration for sites                                |
 | `skills/iscc-docs-theme/SKILL.md`            | Setup, migration and upgrade procedure for sites; `docs-workflow.yml` template            |
@@ -32,9 +32,9 @@ both. Full Markdown of this site: [`llms-full.txt`](https://theme.iscc.codes/llm
 ### Import flow
 
 ```
-cli → check → markdown, project, wordmark
-cli → markdown, project, wordmark
-wordmark → zensical_iscc.THEME_DIR, fontTools
+cli → check → markdown, project, project_logo
+cli → markdown, project, project_logo
+project_logo → zensical_iscc.THEME_DIR, fontTools
 ```
 
 ### Public surface
@@ -54,7 +54,7 @@ wordmark → zensical_iscc.THEME_DIR, fontTools
 | Goal                                         | Command                                   |
 | -------------------------------------------- | ----------------------------------------- |
 | Build for deployment or real preview         | `zensical-iscc build`                     |
-| Live-reload drafting (no lockup, no `.md`)   | `zensical serve --dev-addr 127.0.0.1:<port>` |
+| Live-reload drafting (no project logo, no `.md`)   | `zensical serve --dev-addr 127.0.0.1:<port>` |
 | Add Markdown copies to an existing build     | `zensical-iscc markdown`                  |
 | Gate CI                                      | `zensical-iscc check --strict`            |
 | Config elsewhere                             | add `-f path/to/zensical.toml`            |
@@ -64,7 +64,7 @@ wordmark → zensical_iscc.THEME_DIR, fontTools
 | Need                                 | Setting                                                         |
 | ------------------------------------ | --------------------------------------------------------------- |
 | Home page title suffix               | `[project.extra.iscc] tagline`                                  |
-| Header wordmark name differs from `repo_name` minus `iscc-` | `[project.extra.iscc] product`           |
+| Project logo name differs from `repo_name` minus `iscc-` | `[project.extra.iscc] project`           |
 | Header "Projects" menu               | `[[project.extra.iscc.related]]` with `name`, `link`, `description` |
 | Hide "Copy page"                     | `copy_page = false`                                             |
 | Chat widget                          | `chat = true`, only after iscc.ai serves the domain            |
@@ -79,6 +79,7 @@ wordmark → zensical_iscc.THEME_DIR, fontTools
 | Colours, spacing, component styles       | `theme/assets/iscc/theme.css` (map tokens; never edit `tokens/`) |
 | Head metadata, page-level widgets        | `theme/main.html`                                            |
 | Header markup                            | `theme/partials/header.html` (Zensical copy + one include)   |
+| Footer content, shared ISCC links, social links | `theme/partials/copyright.html`                       |
 | Default features, palette                | `theme/mkdocs_theme.yml`                                     |
 | New configuration rule                   | `check.py` new `*_findings` + call in `check()`              |
 | New build output                         | `cli.run_build` chain + `check` presence finding             |
@@ -90,9 +91,9 @@ wordmark → zensical_iscc.THEME_DIR, fontTools
 | No Python file under `zensical_iscc/theme/`                                | Zensical copies every non-template file into the site       |
 | One pinned Zensical version in `pyproject.toml`                            | Templates override Zensical's                               |
 | Pages load nothing from other origins except `stats.iscc.codes`, `iscc.ai` | Privacy promise; `check.ALLOWED_HOSTS`                      |
-| Product name matches `[a-z0-9]+(-[a-z0-9]+)*`, does not start with `iscc`  | `wordmark.is_valid`; invalid explicit `product` is an error |
-| `wordmark.compose` output equals `tests/fixtures/products/*.svg`           | Byte fidelity with the reference SVGs; keep arithmetic order |
-| Coordinates formatted by `wordmark.fmt`, two decimals                      | Fidelity                                                    |
+| Project name matches `[a-z0-9]+(-[a-z0-9]+)*`, does not start with `iscc`  | `project_logo.is_valid`; invalid explicit `project` is an error |
+| `project_logo.compose` output equals `tests/fixtures/project-logos/*.svg`           | Byte fidelity with the reference SVGs; keep arithmetic order |
+| Coordinates formatted by `project_logo.fmt`, two decimals                      | Fidelity                                                    |
 | `nav` is directly under `[project]`, before any subtable                   | TOML scopes keys into the last table header                 |
 | Listing Markdown extensions replaces Zensical's defaults                   | The list must be complete                                   |
 | `for-coding-agents.md` exists and is in `nav`, last                        | `check.agent_page_findings` warns; fails under `--strict`   |
@@ -107,12 +108,12 @@ wordmark → zensical_iscc.THEME_DIR, fontTools
 | --------------------------------- | ------------------------------------------------------------------------------- | --------------------------- |
 | `cli.run_build`                   | Zensical build (clean), then everything below                                   | First non-zero step code    |
 | `cli.run_markdown`                | `site/**/index.md`, `site/llms-full.txt`, `site/llms.txt`                       | 1 if `site/` is missing     |
-| `cli.run_wordmark`                | `site/assets/iscc/product.svg` (white-coral, 1 h = 30px)                        | 1 for an invalid name; 0 and a note without a name |
+| `cli.run_project_logo`                | `site/assets/iscc/project-logo.svg` (white-coral, 1 h = 30px)                        | 1 for an invalid name; 0 and a note without a name |
 | `cli.run_check`                   | Nothing; prints findings and a count                                            | 1 on errors, or on warnings with `--strict` |
 | `markdown.write_pages`            | One `index.md` per page, front matter stripped; both llms files                 | None                        |
-| `wordmark.write`                  | Creates `assets/iscc/` if needed                                                | Path written                |
+| `project_logo.write`                  | Creates `assets/iscc/` if needed                                                | Path written                |
 | `scripts/sync_changelog.py`       | `docs/changelog.md`                                                             | 1 when it changed the file  |
-| `wordmark.signature_geometry`, `face` | Cached (`functools.cache`) per process                                      | -                           |
+| `project_logo.signature_geometry`, `face` | Cached (`functools.cache`) per process                                      | -                           |
 
 ## Task recipes
 
@@ -164,7 +165,7 @@ Only when the human asks: rename "Unreleased" in `CHANGELOG.md`, set `version` i
 | A check finding                       | `docs/command-line.md` tables, `tests/test_check.py`, `SKILL.md` if it guides a fix   |
 | A command or build output             | `cli.py` docstring, `docs/command-line.md`, `markdown_findings`/presence checks        |
 | `theme.css` or templates              | Look at theme.iscc.codes in both schemes; `docs/design.md` if a design rule changes    |
-| `wordmark.py`                         | Fixtures must still match; refresh them from the ISCC brand assets if the lockup design changed |
+| `project_logo.py`                         | Fixtures must still match; refresh them from the ISCC brand assets if the project logo design changed |
 | Brand assets                          | Copy from the ISCC brand assets; never edit |
 | `CHANGELOG.md`                        | Commit the `docs/changelog.md` the hook writes                                         |
 | Agent page convention                 | `markdown.AGENT_PAGE`, `check.agent_page_findings`, `docs/writing.md`, `SKILL.md`       |
@@ -173,7 +174,7 @@ Only when the human asks: rename "Unreleased" in `CHANGELOG.md`, set `version` i
 ## Common mistakes
 
 NEVER build a deployable site with `zensical build`. ALWAYS use `zensical-iscc build`; otherwise "Copy page",
-`llms.txt` and the product wordmark are missing and `check` reports errors.
+`llms.txt` and the project logo are missing and `check` reports errors.
 
 ---
 

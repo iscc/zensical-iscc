@@ -1,10 +1,10 @@
 {#-
   Header and drawer logo: the ISCC primary signature with coral circle, and in
-  the header the product wordmark lockup where it fits.
+  the header the project logo where it fits.
 
-  `zensical-iscc build` writes the lockup for the site's product name to
-  assets/iscc/product.svg. Where the file is missing, as under `zensical serve`
-  or without a product name, the image removes itself and theme.css shows the
+  `zensical-iscc build` writes the project logo for the site's project name to
+  assets/iscc/project-logo.svg. Where the file is missing, as under `zensical serve`
+  or without a project name, the image removes itself and theme.css shows the
   plain signature. Both signature colourways are rendered; theme.css picks one
   per field. A project can still set `theme.logo` to replace them all with its
   own single image.
@@ -13,8 +13,8 @@
 {% if config.theme.logo %}
   <img src="{{ config.theme.logo | url }}" alt="{{ config.site_name }}">
 {% else %}
-  {% if iscc.product or config.repo_name %}
-  <img class="iscc-product" src="{{ 'assets/iscc/product.svg' | url }}" alt="{{ config.site_name }}" onerror="this.remove()">
+  {% if iscc.project or config.repo_name %}
+  <img class="iscc-project-logo" src="{{ 'assets/iscc/project-logo.svg' | url }}" alt="{{ config.site_name }}" onerror="this.remove()">
   {% endif %}
   <img class="iscc-logo iscc-logo--light" src="{{ 'assets/iscc/logos/iscc-logo-black-coral.svg' | url }}" alt="ISCC" width="784" height="218">
   <img class="iscc-logo iscc-logo--dark" src="{{ 'assets/iscc/logos/iscc-logo-white-coral.svg' | url }}" alt="ISCC" width="784" height="218">

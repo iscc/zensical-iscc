@@ -1,12 +1,12 @@
-"""Compose the ISCC product wordmark lockup for a site's product name.
+"""Compose the ISCC project logo for a site's project name.
 
-The signed-before lockup of the ISCC brand: the ISCC primary signature, a
+The project logo follows the signed-before layout of the ISCC brand: the ISCC primary signature, a
 hairline 1 h tall and 0.04 h wide in the word colour at 50 % opacity, 0.3 h of space on each side, then the
-product name in Readex Pro Bold with a tracking of -10/1000 em and a coral point. h is the height of the ISCC
+project name in Readex Pro Bold with a tracking of -10/1000 em and a coral point. h is the height of the ISCC
 symbol, which equals the ascender height of the word. Clear space is the ISCC logo's own, 0.25 x.
 
 The signature masters and the Bold font are the theme's copies of the ISCC brand assets, so the output matches
-the reference lockups in `tests/fixtures/products/` byte for byte; `tests/test_wordmark.py` guards that. Keep
+the reference logos in `tests/fixtures/project-logos/` byte for byte; `tests/test_project_logo.py` guards that. Keep
 the arithmetic in its order, since coordinates are rounded to two decimals.
 """
 
@@ -32,27 +32,27 @@ POINT = 1.24  # stem widths
 RULE_GAP, RULE_WIDTH = 0.3, 0.04  # h
 NAME_RE = re.compile(r"[a-z0-9]+(-[a-z0-9]+)*")
 NS = {"s": "http://www.w3.org/2000/svg"}
-OUTPUT = "assets/iscc/product.svg"
+OUTPUT = "assets/iscc/project-logo.svg"
 HEADER_H = 30  # CSS px of 1 h in the header; the brand minimum is 14
 
 
 def fmt(value):
     # type: (float) -> str
-    """Format a coordinate with at most two decimals, as the reference lockups do."""
+    """Format a coordinate with at most two decimals, as the reference logos do."""
     text = f"{value:.2f}".rstrip("0").rstrip(".")
     return "0" if text in ("", "-0") else text
 
 
 def is_valid(name):
     # type: (str) -> bool
-    """Tell whether the wordmark rule covers a name: lowercase words joined by hyphens, without iscc."""
+    """Tell whether the project logo rule covers a name: lowercase words joined by hyphens, without iscc."""
     return bool(NAME_RE.fullmatch(name)) and not name.startswith("iscc")
 
 
-def product_name(config):
+def project_name(config):
     # type: (dict) -> str | None
-    """Return the site's product name: `[project.extra.iscc] product`, else `repo_name` without iscc-."""
-    explicit = config.get("extra", {}).get("iscc", {}).get("product")
+    """Return the site's project name: `[project.extra.iscc] project`, else `repo_name` without iscc-."""
+    explicit = config.get("extra", {}).get("iscc", {}).get("project")
     if explicit is not None:
         return explicit
     derived = (config.get("repo_name") or "").rsplit("/", 1)[-1].lower().removeprefix("iscc-")
@@ -82,7 +82,7 @@ def attr(root, path, key):
 @cache
 def signature_geometry():
     # type: () -> dict[str, float]
-    """Read the symbol and wordmark bounds of the primary signature master, in master units."""
+    """Read the symbol and letter bounds of the primary signature master, in master units."""
     root = ET.parse(master("black-coral")).getroot()  # noqa: S314 (the theme's own master, not untrusted input)
     sx0, sy0, sx1, sy1 = path_bounds(attr(root, "s:g/s:path", "d"))
     cx, cy, r = (float(attr(root, "s:g/s:circle", k)) for k in ("cx", "cy", "r"))
@@ -174,7 +174,7 @@ def descent(name, h):
 
 def compose(name, treatment="white-coral", display_h=None):
     # type: (str, str, float | None) -> str
-    """Return the signed-before lockup SVG; with `display_h`, sized so that 1 h is that many CSS px."""
+    """Return the project logo SVG; with `display_h`, sized so that 1 h is that many CSS px."""
     if not is_valid(name):
         raise ValueError(f"expected a lowercase repository name without the iscc- prefix, got {name!r}")
     g = signature_geometry()
@@ -201,7 +201,7 @@ def compose(name, treatment="white-coral", display_h=None):
 
 def write(site_dir, name):
     # type: (Path, str) -> Path
-    """Write the header lockup for a product name into a built site and return its path."""
+    """Write the project logo for a project name into a built site and return its path."""
     path = site_dir / OUTPUT
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(compose(name, "white-coral", HEADER_H), encoding="utf-8")

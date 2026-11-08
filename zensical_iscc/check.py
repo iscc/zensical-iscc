@@ -10,7 +10,7 @@ import re
 from pathlib import Path  # noqa: F401 (used in type comments)
 from urllib.parse import urlsplit
 
-from zensical_iscc import markdown, project, wordmark
+from zensical_iscc import markdown, project, project_logo
 
 THEME_NAME = "zensical_iscc"
 ALLOWED_HOSTS = frozenset({"stats.iscc.codes", "iscc.ai"})
@@ -90,17 +90,23 @@ def metadata_findings(config):
         findings.append(warning('set `edit_uri` (for example "edit/main/docs/"): the default uses the master branch'))
     if not config.get("extra", {}).get("iscc", {}).get("tagline"):
         findings.append(warning("set `tagline` in [project.extra.iscc]: it completes the home page title"))
+    if "<a " in str(config.get("copyright", "")):
+        findings.append(
+            warning(
+                'set `copyright` to plain text, such as "Copyright © 2026 The Authors": the footer links the ISCC pages'
+            )
+        )
     return findings
 
 
-def product_findings(config):
+def project_name_findings(config):
     # type: (dict) -> list[tuple[str, str]]
-    """Check that the site has a product name the header wordmark can be built from."""
-    name = wordmark.product_name(config)
+    """Check that the site has a project name the project logo can be built from."""
+    name = project_logo.project_name(config)
     if name is None:
-        return [warning("set `product` in [project.extra.iscc] or `repo_name`: the header lacks a product wordmark")]
-    if not wordmark.is_valid(name):
-        return [error(f"product {name!r} in [project.extra.iscc]: use lowercase words and hyphens, without iscc-")]
+        return [warning("set `project` in [project.extra.iscc] or `repo_name`: the header lacks a project logo")]
+    if not project_logo.is_valid(name):
+        return [error(f"project {name!r} in [project.extra.iscc]: use lowercase words and hyphens, without iscc-")]
     return []
 
 
@@ -140,12 +146,12 @@ def agent_page_findings(sources, nav):
     return []
 
 
-def wordmark_findings(config, built_dir):
+def project_logo_findings(config, built_dir):
     # type: (dict, Path) -> list[tuple[str, str]]
-    """Check that the built site holds the product wordmark the header shows."""
-    name = wordmark.product_name(config)
-    if name and wordmark.is_valid(name) and not (built_dir / wordmark.OUTPUT).is_file():
-        return [error("the product wordmark is missing from the site; build with `zensical-iscc build`")]
+    """Check that the built site holds the project logo the header shows."""
+    name = project_logo.project_name(config)
+    if name and project_logo.is_valid(name) and not (built_dir / project_logo.OUTPUT).is_file():
+        return [error("the project logo is missing from the site; build with `zensical-iscc build`")]
     return []
 
 
@@ -236,7 +242,7 @@ def check(config_path):
     override_dir = project.custom_dir(config_path, config)
     findings = theme_findings(config.get("theme", {}))
     findings += custom_dir_findings(override_dir)
-    findings += metadata_findings(config) + product_findings(config) + related_findings(config)
+    findings += metadata_findings(config) + project_name_findings(config) + related_findings(config)
     findings += analytics_findings(config) + extra_asset_findings(config)
     sources = markdown.page_sources(project.docs_dir(config_path, config), override_dir)
     findings += agent_page_findings(sources, config.get("nav", []))
@@ -244,4 +250,4 @@ def check(config_path):
     if not built_dir.is_dir():
         return [*findings, warning("the site is not built; run `zensical-iscc build` to check its pages")]
     findings += site_findings(built_dir) + markdown_findings(built_dir, sources)
-    return findings + wordmark_findings(config, built_dir)
+    return findings + project_logo_findings(config, built_dir)

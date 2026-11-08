@@ -39,6 +39,47 @@ def test_docs_home_page(docs_config):
     assert "glightbox" not in html
 
 
+def test_footer_links_the_iscc_pages_and_shows_the_copyright(docs_config):
+    html = (build(docs_config) / "components" / "index.html").read_text(encoding="utf-8")
+    footer = html[html.index('class="md-footer-meta') :]
+    for link in ("foundation", "privacy", "imprint"):
+        assert f'href="https://iscc.io/{link}"' in footer
+    assert 'href="https://creativecommons.org/licenses/by/4.0/"' in footer
+    assert "../assets/iscc/logos/iscc-icon-white-coral.svg" in footer
+    assert "<span>Copyright © 2026 The Authors</span>" in footer
+    assert "Made with" in footer
+    social = footer[footer.index('class="md-social"') :]
+    assert social.index("https://github.com/iscc/zensical-iscc") < social.index("linkedin.com/company/iscc-foundation")
+    assert 'title="github.com"' in social
+    assert 'href="https://x.com/iscc_foundation"' in social
+    edit_config(docs_config, 'copyright = "Copyright © 2026 The Authors"', "")
+    edit_config(docs_config, "[project.extra.iscc]\n", "[project.extra]\ngenerator = false\n\n[project.extra.iscc]\n")
+    html = (build(docs_config) / "index.html").read_text(encoding="utf-8")
+    footer = html[html.index('class="md-footer-meta') :]
+    assert "The Authors" not in footer
+    assert "Made with" not in footer
+    assert 'href="https://iscc.io/imprint"' in footer
+
+
+def test_footer_shows_the_iscc_social_links_without_site_links(docs_config):
+    github = (
+        '[[project.extra.social]]\nicon = "fontawesome/brands/github"\nlink = "https://github.com/iscc/zensical-iscc"'
+    )
+    edit_config(docs_config, github, "")
+    html = (build(docs_config) / "index.html").read_text(encoding="utf-8")
+    social = html[html.index('class="md-social"') :]
+    assert "github.com" not in social.split("</div>")[0]
+    assert 'href="https://www.linkedin.com/company/iscc-foundation"' in social
+    assert 'title="ISCC Foundation on X"' in social
+
+
+def test_footer_escapes_social_link_names(docs_config):
+    link = 'link = "https://github.com/iscc/zensical-iscc"'
+    edit_config(docs_config, link, link + '\nname = "The \\"Example\\" Project"')
+    html = (build(docs_config) / "index.html").read_text(encoding="utf-8")
+    assert 'title="The &quot;Example&quot; Project" aria-label="The &quot;Example&quot; Project"' in html
+
+
 def test_docs_inner_page_title(docs_config):
     html = (build(docs_config) / "components" / "index.html").read_text(encoding="utf-8")
     assert "<title>Components - ISCC Theme</title>" in html
@@ -193,7 +234,7 @@ def test_header_overrides_spare_the_drawer_and_reach_the_magnifier():
     assert ":root {\n  --iscc-header-height: 3.2rem;\n}" in css
     assert "\n.md-sidebar {\n  top:" not in css
     # Zensical shows drawer logos with `.md-nav .md-nav__title[for=__drawer] .md-logo img`.
-    assert '.md-nav .md-nav__title[for="__drawer"] .md-logo img.iscc-product {\n  display: none;' in css
+    assert '.md-nav .md-nav__title[for="__drawer"] .md-logo img.iscc-project-logo {\n  display: none;' in css
     assert ".md-search__button::before {\n  background-color: currentColor;" in css
 
 

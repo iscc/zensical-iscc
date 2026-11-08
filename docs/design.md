@@ -14,7 +14,7 @@ tokens to the Zensical variables. It adds styles for the parts that the tokens d
 | Scheme | Canvas     | Text       | Fields and code                | Links    |
 | ------ | ---------- | ---------- | ------------------------------ | -------- |
 | Light  | Paper      | Near-black | White, with thin rules         | Blue     |
-| Dark   | Near-black | Paper      | Navy code blocks               | Sky Blue |
+| Dark   | Near-black | Paper      | Graphite, with thin rules      | Sky Blue |
 
 Readers change the scheme with the sun and moon button. On the first visit, the site uses the scheme of the
 operating system.
@@ -23,12 +23,25 @@ operating system.
 
 The header is the same in both schemes: Deep Navy with a grain texture, 64px high, with controls in 78% white.
 
-- The header starts with the product wordmark in white and coral, at a symbol height of 30px. The brand minimum is
+- The header starts with the project logo in white and coral, at a symbol height of 30px. The brand minimum is
     14px.
-- The header content aligns with the body. The logo starts at the left edge of the navigation. The repository
-    widget ends at the right edge of the content column.
-- Without a wordmark, the header shows the plain ISCC logo and the site name in spaced Light capitals. On phones, it
+- The header content aligns with the columns below. The logo starts at the coral marker of the navigation. The
+    search field ends at the right edge of the content column. The repository icon is above the text of the table
+    of contents.
+- Without a project logo, the header shows the plain ISCC logo and the site name in spaced Light capitals. On phones, it
     shows only the logo.
+
+## Footer
+
+The footer bar is near-black in both schemes. It uses the same columns as the page.
+
+- The white and coral ISCC symbol is in the navigation column, at the same edge as the header logo.
+- The links that all ISCC sites share are in the content column: ISCC Foundation, Privacy Policy, Imprint and the
+    CC BY 4.0 license.
+- A thin line separates the last line: the `copyright` text of the site and "Made with Zensical", in 65% white.
+- The social links are in the table of contents column: the links of the site from `[[project.extra.social]]`,
+    then the LinkedIn and X pages of the ISCC Foundation.
+- Links are white without underline. On hover and focus, they are cyan and underlined.
 
 ## Color roles
 

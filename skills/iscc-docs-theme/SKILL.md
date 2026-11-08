@@ -12,15 +12,15 @@ The theme repository is <https://github.com/iscc/zensical-iscc>; read the files 
 there is one. Its documentation is published at <https://theme.iscc.codes/> (all pages in one
 file: <https://theme.iscc.codes/llms-full.txt>). Files referenced here, relative to that repository:
 
-| File                                       | Use                                                                 |
-| ------------------------------------------ | ------------------------------------------------------------------- |
-| `zensical.toml`                            | Reference configuration; values marked `# site` are per site        |
-| `docs/configuration.md`                    | Every setting and option, the product wordmark, the "Projects" menu |
-| `docs/writing.md`                          | Page conventions: front matter, icons, the For Coding Agents page   |
-| `docs/components.md`                       | The CSS classes the theme styles                                    |
-| `docs/command-line.md`                     | Commands, build outputs, every check finding, third-party requests  |
-| `skills/iscc-docs-theme/docs-workflow.yml` | GitHub Actions template: build, check, deploy to GitHub Pages       |
-| `skills/docs-for-agents/SKILL.md`          | Skill that writes the site's For Coding Agents page                 |
+| File                                       | Use                                                                |
+| ------------------------------------------ | ------------------------------------------------------------------ |
+| `zensical.toml`                            | Reference configuration; values marked `# site` are per site       |
+| `docs/configuration.md`                    | Every setting and option, the project logo, the "Projects" menu    |
+| `docs/writing.md`                          | Page conventions: front matter, icons, the For Coding Agents page  |
+| `docs/components.md`                       | The CSS classes the theme styles                                   |
+| `docs/command-line.md`                     | Commands, build outputs, every check finding, third-party requests |
+| `skills/iscc-docs-theme/docs-workflow.yml` | GitHub Actions template: build, check, deploy to GitHub Pages      |
+| `skills/docs-for-agents/SKILL.md`          | Skill that writes the site's For Coding Agents page                |
 
 The project needs Python 3.11 or newer.
 
@@ -100,10 +100,10 @@ Markdown extensions and plugins. The rules that matter:
 | `site_url`                           | The published URL with a trailing slash                                            |
 | `edit_uri`                           | `"edit/main/<docs dir>/"`; the default points at a `master` branch                 |
 | `[project.extra.iscc]`               | `tagline`, `copy_page = true`, `chat = false` unless confirmed                     |
-| `product` in `[project.extra.iscc]`  | Leave unset when `repo_name` minus `iscc-` is the product name; else set it        |
+| `project` in `[project.extra.iscc]`  | Leave unset when `repo_name` minus `iscc-` is the project name; else set it        |
 | `[[project.extra.iscc.related]]`     | One table per related site, this one included: `name`, https `link`, `description` |
 | `[project.extra.analytics]`          | Leave unset: Plausible counts the host of `site_url`; set `domain` if it differs   |
-| `copyright`                          | The ISCC footer from the reference, with the project's years                       |
+| `copyright`                          | Plain text, `"Copyright © <years> The Authors"`; the theme adds the ISCC links     |
 | `nav`                                | Ends with `{ "For Coding Agents" = "for-coding-agents.md" }`                       |
 
 Two TOML traps:
@@ -154,7 +154,7 @@ After changing the public API, CLI or configuration, run the docs-for-agents ski
 
 | Task    | Command                                                                            |
 | ------- | ---------------------------------------------------------------------------------- |
-| Build   | `zensical-iscc build` (Zensical build, Markdown copies, `llms.txt`, wordmark)      |
+| Build   | `zensical-iscc build` (Zensical build, Markdown copies, `llms.txt`, project logo)  |
 | Check   | `zensical-iscc check --strict`                                                     |
 | Preview | `zensical serve --dev-addr 127.0.0.1:<port>`; keep a port the project already uses |
 
@@ -173,10 +173,10 @@ too, so a theme bump rebuilds the site.
 1. `uv run zensical-iscc build` and `uv run zensical-iscc check --strict` end with `0 errors, 0 warnings`. Explain
     any warning you leave to the human.
 1. Serve the built `site/` directory (for example `python -m http.server <port> --directory site`) and look at the
-    home page and one inner page in the light and the dark scheme: the product wordmark lockup in the header
+    home page and one inner page in the light and the dark scheme: the project logo in the header
     (for example "ISCC | monitor."), Readex Pro headings, "Copy page" button, an icon in front of every page in
     the navigation, the "Projects" menu with this site marked, "For Coding Agents" last in the navigation.
-    `zensical serve` shows the plain ISCC logo instead of the lockup; only the built site has it.
+    `zensical serve` shows the plain ISCC logo instead of the project logo; only the built site has it.
 1. `site/llms.txt` lists the For Coding Agents page first.
 1. If the host of `site_url` is new to Plausible, tell the human to add it at stats.iscc.codes; until then
     visits are not counted.
@@ -187,7 +187,8 @@ too, so a theme bump rebuilds the site.
 Change the `tag` in `[tool.uv.sources]`, run `uv lock --upgrade-package zensical-iscc`, then build and check. The
 release notes on GitHub say what changed and which Zensical version the release pins. If the site has no
 `[[project.extra.iscc.related]]` entries yet, propose the "Projects" menu as in step 2; if it has no For Coding
-Agents page yet, write it as in step 6.
+Agents page yet, write it as in step 6. If `copyright` still holds the old HTML string with links, replace it with
+the plain text.
 
 ## Rules
 

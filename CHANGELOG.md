@@ -6,9 +6,9 @@ To upgrade a site, change the `tag` in its `[tool.uv.sources]` and run `uv lock 
 
 Pins **Zensical 0.1.0**.
 
-- **Product wordmark.** `zensical-iscc build` draws the ISCC product wordmark, for example "ISCC |
-    monitor.". The name comes from `product` in `[project.extra.iscc]`, or else from `repo_name` without `iscc-`.
-    The check reports a missing or invalid name and a missing wordmark.
+- **Project logo.** `zensical-iscc build` draws the ISCC project logo, for example "ISCC |
+    monitor.". The name comes from `project` in `[project.extra.iscc]`, or else from `repo_name` without `iscc-`.
+    The check reports a missing or invalid name and a missing project logo.
 - **Header.** The header is Deep Navy with grain and 64px high. It aligns with the body at all screen widths. A
     "Projects" menu links to the related ISCC sites in `[[project.extra.iscc.related]]`.
 - **For Coding Agents.** The last navigation entry of each site is the `for-coding-agents.md` page. The check gives
@@ -19,8 +19,13 @@ Pins **Zensical 0.1.0**.
 - **Type and buttons.** Body text is Readex Pro Light at 16px, with lines of about 75 characters. The primary button
     is a near-black pointed block with a white label and a coral chevron.
 - **Navigation icons.** Pages set `icon: lucide/<name>` in their front matter.
-- Footer links are easier to read in the light scheme. The phone drawer keeps its top offset and shows only the ISCC
-    logo.
+- **Footer.** The footer bar is near-black and uses the columns of the page. It has the ISCC symbol and the links
+    that all ISCC sites share: ISCC Foundation, Privacy Policy, Imprint and CC BY 4.0. After the social links of the
+    site, it shows the LinkedIn and X pages of the ISCC Foundation. Set `copyright` to plain text, such as
+    "Copyright © 2026 The Authors". The check gives a warning if `copyright` still contains links.
+- **Alignment.** The header, the columns and the footer share one grid. The search field ends with the content column, the repository icon is above the table of contents, and the first lines of the three columns are on one line.
+- **Dark code blocks.** Code blocks in the dark scheme are graphite with a thin rule instead of navy.
+- The phone drawer keeps its top offset and shows only the ISCC logo.
 - The theme documentation has its own site at theme.iscc.codes. This repository builds it.
 
 ## 0.2.0 - 2026-10-09

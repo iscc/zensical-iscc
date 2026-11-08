@@ -23,12 +23,12 @@ this site. It is also the full reference:
 
 | Setting                       | Rule                                                                                     |
 | ----------------------------- | ---------------------------------------------------------------------------------------- |
-| `site_name`                   | The name of the product. It is the first part of the home page title and link previews   |
+| `site_name`                   | The name of the project. It is the first part of the home page title and link previews   |
 | `site_description`            | One sentence. Pages without a description of their own use it                            |
 | `site_url`                    | The published URL, with a trailing slash. Link previews, canonical URLs and analytics need it |
-| `repo_url`, `repo_name`       | The GitHub repository. `repo_name` also gives the name in the product wordmark           |
+| `repo_url`, `repo_name`       | The GitHub repository. `repo_name` also gives the name in the project logo           |
 | `edit_uri`                    | `"edit/main/<docs dir>/"`. The Zensical default points to a `master` branch              |
-| `copyright`                   | The ISCC footer from the reference, with the years of the project                        |
+| `copyright`                   | Plain text with the years, such as `"Copyright © 2026 The Authors"`. The theme adds the ISCC links |
 | `nav`                         | All pages. The last entry is `{ "For Coding Agents" = "for-coding-agents.md" }`          |
 
 ## `[project.extra.iscc]`
@@ -41,7 +41,7 @@ The theme reads these options:
 | `copy_page` | `true`                              | Shows the "Copy page" button. Its content needs `zensical-iscc build`  |
 | `chat`      | `false`                             | Shows the iscc.ai chat widget. Set it only for domains that iscc.ai serves |
 | `og_image`  | `assets/iscc/social-share.png`      | The path of the link preview image, relative to the site root          |
-| `product`   | `repo_name` without `iscc-`         | The name in the product wordmark of the header                         |
+| `project`   | `repo_name` without `iscc-`         | The name in the project logo of the header                         |
 | `related`   | none                                | The entries of the "Projects" menu, as `[[project.extra.iscc.related]]` tables |
 
 ```toml
@@ -49,27 +49,27 @@ The theme reads these options:
 tagline = "Zensical theme for ISCC documentation"
 copy_page = true
 chat = false
-product = "theme"
+project = "theme"
 ```
 
 The chat widget starts only on domains that the iscc.ai token endpoint allows. It does not work on localhost.
 
-## Product wordmark
+## Project logo
 
-The header starts with the ISCC product wordmark: the ISCC logo, a thin vertical line and the product
+The header starts with the ISCC project logo: the ISCC logo, a thin vertical line and the project
 name in Readex Pro Bold with a coral period. On this site, it reads "ISCC | theme.".
 
-- The name comes from `product`. If `product` is not set, the theme uses `repo_name` without the owner and without
+- The name comes from `project`. If `project` is not set, the theme uses `repo_name` without the owner and without
     the prefix `iscc-`. For example, `iscc/iscc-monitor` gives `monitor`.
-- Set `product` if this rule gives the wrong name. This site sets it, because `iscc/zensical-iscc` gives
+- Set `project` if this rule gives the wrong name. This site sets it, because `iscc/zensical-iscc` gives
     `zensical-iscc`, which is not a valid name.
 - A valid name has lowercase words with hyphens between them. It does not contain `iscc`.
-- `zensical-iscc build` draws the wordmark with the font and logo copies of the theme. It writes the wordmark to
-    `assets/iscc/product.svg`, in white and coral, at a symbol height of 30px.
-- The header shows the plain ISCC logo and the site name instead of the wordmark:
+- `zensical-iscc build` draws the project logo with the font and logo copies of the theme. It writes the project logo to
+    `assets/iscc/project-logo.svg`, in white and coral, at a symbol height of 30px.
+- The header shows the plain ISCC logo and the site name instead of the project logo:
     - under `zensical serve`
     - on screens narrower than 720px
-    - on sites without a product name
+    - on sites without a project name
 
 ## Related projects menu
 

@@ -22,7 +22,7 @@ zensical-iscc = { git = "https://github.com/iscc/zensical-iscc", tag = "vX.Y.Z" 
 ```
 
 ```bash
-uv run zensical-iscc build             # zensical build, then Markdown copies, llms.txt, product wordmark
+uv run zensical-iscc build             # zensical build, then Markdown copies, llms.txt, project logo
 uv run zensical-iscc check --strict    # check configuration and built site; exit 1 on findings
 ```
 

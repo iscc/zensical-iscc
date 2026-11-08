@@ -13,7 +13,7 @@ site_url = "https://theme.iscc.codes/"                                # site
 repo_url = "https://github.com/iscc/zensical-iscc"                    # site
 repo_name = "iscc/zensical-iscc"                                      # site
 edit_uri = "edit/main/docs/"                                          # site: branch and docs path
-copyright = "<a href=\"https://iscc.io/foundation\">ISCC Foundation</a> | Documentation licensed under <a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a> | Copyright &copy; 2026 The Authors | <a href=\"https://iscc.io/privacy\">Privacy Policy</a> | <a href=\"https://iscc.io/imprint\">Imprint</a>"
+copyright = "Copyright © 2026 The Authors"                         # site: years; the theme adds the ISCC links
 
 # Each page sets its navigation icon with `icon: lucide/<name>` in its front matter.
 # The last page in the navigation is "For Coding Agents".
@@ -36,7 +36,7 @@ nav = [                                                               # site
 tagline = "Zensical theme for ISCC documentation" # site: home page title suffix
 copy_page = true                                  # "Copy page" button; needs `zensical-iscc build`
 chat = false                                      # iscc.ai chat widget; only on origins iscc.ai allows
-product = "theme"                                 # site: header wordmark name; default: repo_name without iscc-
+project = "theme"                                 # site: name in the project logo; default: repo_name without iscc-
 
 # Related ISCC sites for the "Projects" menu in the header, in display order. List the sites
 # that your readers go to, the specification and the site itself. The entry that links to
