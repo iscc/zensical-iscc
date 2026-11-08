@@ -2,7 +2,9 @@
 
 To upgrade a site, change the `tag` in its `[tool.uv.sources]` and run `uv lock --upgrade-package zensical-iscc`.
 
-## Unreleased
+## 0.3.1 - 2026-11-09
+
+Pins **Zensical 0.1.0**.
 
 - **Mermaid diagrams.** Fenced `mermaid` blocks become diagrams. The theme serves its own copy of Mermaid 12.2.0,
     only on pages with a diagram, so no page loads it from unpkg.com. Sequence diagrams now take the theme colors
