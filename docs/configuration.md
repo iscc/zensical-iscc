@@ -65,7 +65,7 @@ name in Readex Pro Bold with a coral period. On this site, it reads "ISCC | them
     `zensical-iscc`, which is not a valid name.
 - A valid name has lowercase words with hyphens between them. It does not contain `iscc`.
 - `zensical-iscc build` draws the project logo with the font and logo copies of the theme. It writes the project logo to
-    `assets/iscc/project-logo.svg`, in white and coral, at a symbol height of 30px.
+    `assets/iscc/project-logo.svg`, in white and coral, at a symbol height of 24px.
 - The header shows the plain ISCC logo and the site name instead of the project logo:
     - under `zensical serve`
     - on screens narrower than 720px

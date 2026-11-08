@@ -21,10 +21,11 @@ operating system.
 
 ## Header
 
-The header is the same in both schemes: Deep Navy with a grain texture, 64px high, with controls in 78% white.
+The header is the same in both schemes: Deep Navy with a grain texture, 72px high, with controls in 78% white.
 
-- The header starts with the project logo in white and coral, at a symbol height of 30px. The brand minimum is
+- The header starts with the project logo in white and coral, at a symbol height of 24px. The brand minimum is
     14px.
+- The page title, which replaces the site name when the page scrolls, sits on the baseline of the logo letters.
 - The header content aligns with the columns below. The logo starts at the coral marker of the navigation. The
     search field ends at the right edge of the content column. The repository icon is above the text of the table
     of contents.

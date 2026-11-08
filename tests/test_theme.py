@@ -231,7 +231,7 @@ def test_footer_links_outweigh_zensicals_footer_link_rule():
 def test_header_overrides_spare_the_drawer_and_reach_the_magnifier():
     css = (THEME_DIR / "assets" / "iscc" / "theme.css").read_text(encoding="utf-8")
     # The phone drawer keeps Zensical's offset; only sidebars beside the content move below the bar.
-    assert ":root {\n  --iscc-header-height: 3.2rem;\n}" in css
+    assert ":root {\n  --iscc-header-height: 3.6rem;\n}" in css
     assert "\n.md-sidebar {\n  top:" not in css
     # Zensical shows drawer logos with `.md-nav .md-nav__title[for=__drawer] .md-logo img`.
     assert '.md-nav .md-nav__title[for="__drawer"] .md-logo img.iscc-project-logo {\n  display: none;' in css

@@ -651,13 +651,13 @@ html {
 /* A Deep Navy bar with grain in both schemes, with quiet white controls
  * (78% white, 8.6:1 on navy). It leads with the ISCC project logo in white/coral, written by
  * `zensical-iscc build`; without it, and on phones, the plain signature and
- * the site name in spaced Light capitals take its place. The bar is 64px
+ * the site name in spaced Light capitals take its place. The bar is 72px
  * high, and its content sits on the columns below: the logo starts on the
  * coral marker of the navigation, the search field ends with the content
  * column, and the repository widget spans the table of contents, its icon
  * above the contents' text. */
 :root {
-  --iscc-header-height: 3.2rem;
+  --iscc-header-height: 3.6rem;
 }
 
 .md-header {
@@ -709,9 +709,11 @@ html {
   margin: 0;
 }
 
+/* The plain signature at the project logo's size: its symbol, 162.5 of the
+ * file's 217.92 units, is 24px high */
 .md-header__button.md-logo img,
 .md-nav__button.md-logo img {
-  height: 2rem;
+  height: calc(1.2rem * 217.92 / 162.5);
   width: auto;
 }
 
@@ -735,6 +737,13 @@ html {
   font-weight: 400;
 }
 
+/* The site name and the page title share the baseline of the logo's letters,
+ * 48px down the bar: centred text would sit 5.2px higher */
+.md-header__topic .md-ellipsis {
+  position: relative;
+  top: 0.26rem;
+}
+
 /* The site name; the page title that replaces it on scroll keeps its case */
 .md-header__topic:first-child {
   font-weight: 300;
@@ -749,7 +758,7 @@ html {
   }
 }
 
-/* The project logo, sized by its own file so that 1 h is 30px, from 720px
+/* The project logo, sized by its own file so that 1 h is 24px, from 720px
  * up; below that it would crowd the menu button, so the signature stands in.
  * The drawer always shows the signature. */
 .md-logo img.iscc-project-logo,

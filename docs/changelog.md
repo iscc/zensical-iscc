@@ -14,7 +14,7 @@ Pins **Zensical 0.1.0**.
 - **Project logo.** `zensical-iscc build` draws the ISCC project logo, for example "ISCC |
     monitor.". The name comes from `project` in `[project.extra.iscc]`, or else from `repo_name` without `iscc-`.
     The check reports a missing or invalid name and a missing project logo.
-- **Header.** The header is Deep Navy with grain and 64px high. It aligns with the body at all screen widths. A
+- **Header.** The header is Deep Navy with grain and 72px high. It aligns with the body at all screen widths. A
     "Projects" menu links to the related ISCC sites in `[[project.extra.iscc.related]]`.
 - **For Coding Agents.** The last navigation entry of each site is the `for-coding-agents.md` page. The check gives
     a warning if the page is missing or not in `nav`. The plugin has the `docs-for-agents` skill, which writes the

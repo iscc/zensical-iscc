@@ -33,7 +33,7 @@ RULE_GAP, RULE_WIDTH = 0.3, 0.04  # h
 NAME_RE = re.compile(r"[a-z0-9]+(-[a-z0-9]+)*")
 NS = {"s": "http://www.w3.org/2000/svg"}
 OUTPUT = "assets/iscc/project-logo.svg"
-HEADER_H = 30  # CSS px of 1 h in the header; the brand minimum is 14
+HEADER_H = 24  # CSS px of 1 h in the header; the brand minimum is 14
 
 
 def fmt(value):

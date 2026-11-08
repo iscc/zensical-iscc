@@ -108,7 +108,7 @@ project_logo → zensical_iscc.THEME_DIR, fontTools
 | --------------------------------- | ------------------------------------------------------------------------------- | --------------------------- |
 | `cli.run_build`                   | Zensical build (clean), then everything below                                   | First non-zero step code    |
 | `cli.run_markdown`                | `site/**/index.md`, `site/llms-full.txt`, `site/llms.txt`                       | 1 if `site/` is missing     |
-| `cli.run_project_logo`                | `site/assets/iscc/project-logo.svg` (white-coral, 1 h = 30px)                        | 1 for an invalid name; 0 and a note without a name |
+| `cli.run_project_logo`                | `site/assets/iscc/project-logo.svg` (white-coral, 1 h = 24px)                        | 1 for an invalid name; 0 and a note without a name |
 | `cli.run_check`                   | Nothing; prints findings and a count                                            | 1 on errors, or on warnings with `--strict` |
 | `markdown.write_pages`            | One `index.md` per page, front matter stripped; both llms files                 | None                        |
 | `project_logo.write`                  | Creates `assets/iscc/` if needed                                                | Path written                |
