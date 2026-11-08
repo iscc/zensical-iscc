@@ -52,6 +52,7 @@ def test_demo_site_ships_theme_assets_but_no_python(demo_config):
     assert (site / "assets" / "iscc" / "theme.css").is_file()
     assert (site / "assets" / "iscc" / "fonts" / "readex-pro-400.woff2").is_file()
     assert (site / "assets" / "iscc" / "favicon.svg").is_file()
+    assert (site / "assets" / "iscc" / "grain.png").is_file()
     assert not list(site.rglob("*.py"))
 
 
@@ -112,6 +113,28 @@ def test_no_analytics_without_site_url(demo_config):
     html = (build(demo_config) / "index.html").read_text(encoding="utf-8")
     assert "data-domain" not in html
     assert "plausible.js" not in html
+
+
+def test_root_size_holds_and_primary_button_is_a_near_black_block():
+    css = (THEME_DIR / "assets" / "iscc" / "theme.css").read_text(encoding="utf-8")
+    assert "html {\n  font-size: 125%;\n}" in css
+    assert "--iscc-btn-block: var(--iscc-ink);" in css
+
+
+def test_footer_links_outweigh_zensicals_footer_link_rule():
+    # Zensical colours them with `a:not(:focus, :hover)`; a plain `a` selector loses to it.
+    css = (THEME_DIR / "assets" / "iscc" / "theme.css").read_text(encoding="utf-8")
+    assert "html .md-footer-meta.md-typeset a:not(:focus, :hover) {\n  color: var(--md-footer-fg-color);" in css
+
+
+def test_header_overrides_spare_the_drawer_and_reach_the_magnifier():
+    css = (THEME_DIR / "assets" / "iscc" / "theme.css").read_text(encoding="utf-8")
+    # The phone drawer keeps Zensical's offset; only sidebars beside the content move below the bar.
+    assert ":root {\n  --iscc-header-height: 3.2rem;\n}" in css
+    assert "\n.md-sidebar {\n  top:" not in css
+    # Zensical shows drawer logos with `.md-nav .md-nav__title[for=__drawer] .md-logo img`.
+    assert '.md-nav .md-nav__title[for="__drawer"] .md-logo img.iscc-product {\n  display: none;' in css
+    assert ".md-search__button::before {\n  background-color: currentColor;" in css
 
 
 def test_page_components_are_styled_by_the_theme(demo_config):

@@ -89,6 +89,7 @@ Markdown extensions and plugins. The rules that matter:
 | `site_url`                           | The published URL with a trailing slash                                          |
 | `edit_uri`                           | `"edit/main/<docs dir>/"`; the default points at a `master` branch               |
 | `[project.extra.iscc]`               | `tagline`, `copy_page = true`, `chat = false` unless confirmed                   |
+| `product` in `[project.extra.iscc]`  | Leave unset when `repo_name` minus `iscc-` is the product name; else set it      |
 | `[project.extra.analytics]`          | Leave unset: Plausible counts the host of `site_url`; set `domain` if it differs |
 | `copyright`                          | The ISCC footer from the demo, with the project's years                          |
 
@@ -143,8 +144,9 @@ too, so a theme bump rebuilds the site.
 1. `uv run zensical-iscc build` and `uv run zensical-iscc check --strict` end with `0 errors, 0 warnings`. Explain
     any warning you leave to the human.
 1. Serve the built `site/` directory (for example `python -m http.server <port> --directory site`) and look at the
-    home page and one inner page in the light and the dark scheme: ISCC logo, Readex Pro headings, "Copy page"
-    button, an icon in front of every page in the navigation.
+    home page and one inner page in the light and the dark scheme: the product wordmark lockup in the header
+    (for example "ISCC | monitor."), Readex Pro headings, "Copy page" button, an icon in front of every page in
+    the navigation. `zensical serve` shows the plain ISCC logo instead of the lockup; only the built site has it.
 1. If the host of `site_url` is new to Plausible, tell the human to add it at stats.iscc.codes; until then
     visits are not counted.
 1. Search the repository for leftovers: `zensical_iscc/`, `gen_markdown_pages`, `mkdocs`, old logo file names.

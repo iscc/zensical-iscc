@@ -1,6 +1,6 @@
 """Command line for sites that use the ISCC theme.
 
-zensical-iscc build      build the site with Zensical, then publish its Markdown pages
+zensical-iscc build      build the site with Zensical, then add its Markdown pages and product wordmark
 zensical-iscc markdown   publish the Markdown pages into an already built site
 zensical-iscc check      check the configuration and the built site
 """
@@ -10,7 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from zensical_iscc import check, markdown, project
+from zensical_iscc import check, markdown, project, wordmark
 
 COMMANDS = ("build", "markdown", "check")
 
@@ -33,9 +33,26 @@ def parse_args(argv):
 
 def run_build(config_path):
     # type: (Path) -> int
-    """Build the site with Zensical, then publish its Markdown pages."""
+    """Build the site with Zensical, then publish its Markdown pages and write its product wordmark."""
     command = [sys.executable, "-m", "zensical", "build", "--clean", "--config-file", str(config_path)]
-    return subprocess.run(command, check=False).returncode or run_markdown(config_path)  # noqa: S603
+    returncode = subprocess.run(command, check=False).returncode  # noqa: S603
+    return returncode or run_markdown(config_path) or run_wordmark(config_path)
+
+
+def run_wordmark(config_path):
+    # type: (Path) -> int
+    """Write the header lockup for the site's product name into the built site."""
+    config = project.load_project(config_path)
+    name = wordmark.product_name(config)
+    if name is None:
+        print("no product name: the header shows the ISCC logo (set `product` in [project.extra.iscc])")
+        return 0
+    if not wordmark.is_valid(name):
+        print(f"product {name!r} is not a lowercase name without the iscc- prefix", file=sys.stderr)
+        return 1
+    path = wordmark.write(project.site_dir(config_path, config), name)
+    print(f"wrote the product wordmark for {name!r} to {path}")
+    return 0
 
 
 def run_markdown(config_path):

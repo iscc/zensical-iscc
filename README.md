@@ -27,6 +27,7 @@ tagline = "International Standard Content Code" # home page title suffix
 copy_page = true                                # default true
 chat = true                                     # default false
 # og_image = "assets/iscc/social-share.png"       # default
+# product = "monitor"                             # default: repo_name without "iscc/" and "iscc-"
 
 # Plausible analytics are on by default; this table is only needed to change them
 # [project.extra.analytics]
@@ -45,6 +46,14 @@ would replace the theme's own; page templates can extend it with `{% extends "ma
 
 Every ISCC site counts visits with Plausible under the host name of its `site_url`; register that host at
 stats.iscc.codes. A site without `site_url` gets no analytics.
+
+The header leads with the brand kit's product wordmark lockup: the ISCC signature, a hairline and the product name
+in Readex Pro Bold with a coral point, such as "ISCC | monitor." The name is `product`, or else `repo_name` without
+its owner and the `iscc-` prefix, so `iscc/iscc-monitor` gives `monitor`; it must be lowercase words joined by
+hyphens. `zensical-iscc build` draws the lockup from the theme's copies of the kit's font and signature, the same
+construction as the kit's `source/products.py`, and writes it to `assets/iscc/product.svg`. Under `zensical serve`,
+which skips that step, on screens narrower than 720px and on sites without a product name, the header shows the
+plain ISCC signature and the site name instead.
 
 Build and check:
 
@@ -145,9 +154,12 @@ request stays.
 | `zensical_iscc/theme/assets/iscc/apple-touch-icon.png`               | App tile from the brand kit: white symbol, coral circle, near-black ground                                         |
 | `zensical_iscc/theme/assets/iscc/social-share.png`                   | Default Open Graph image                                                                                           |
 | `zensical_iscc/theme/assets/iscc/circle-rhythm-*.svg`                | Decorative pattern for landing or footer bands                                                                     |
+| `zensical_iscc/theme/assets/iscc/grain.png`                          | Grain texture of the header bar, from iscc-web                                                                     |
 | `zensical_iscc/theme/assets/iscc/copypage.js`                        | "Copy page", "View as Markdown", "Edit on GitHub"                                                                  |
 | `zensical_iscc/theme/assets/iscc/copilot.js`, `copilot.css`          | iscc.ai chat widget loader and shadow-DOM styles                                                                   |
 | `zensical_iscc/*.py`                                                 | The `zensical-iscc` command and the theme entry point                                                              |
+| `zensical_iscc/wordmark.py`                                          | Product wordmark lockup, ported from the brand kit's `source/products.py`                                          |
+| `tests/fixtures/products/`                                           | The kit's lockups for web, hub, search and monitor, which the port must reproduce byte for byte                    |
 | `demo/`                                                              | Demo and reference site                                                                                            |
 | `skills/iscc-docs-theme/`                                            | Agent skill and docs workflow template                                                                             |
 
@@ -158,14 +170,27 @@ copies `mkdocs_theme.yml` to the site root.
 Brand assets are copied from the private ISCC brand kit (`../iscc-brand`). Refresh them from there rather than
 editing the copies. The favicon is the one exception: ISCC websites use the transparent near-black/coral symbol
 instead of the kit's framed white/coral tile, so refresh `favicon.svg` and `favicon.ico` from
-`../iscc-io/public/`.
+`../iscc-io/public/`. The header's `grain.png` comes from `../iscc-web/frontend/assets/`. The wordmark fixtures
+come from the kit's `build/products/`; when the kit's font, signature or `products.py` changes, refresh them and
+port the change to `wordmark.py`.
 
 ## Design decisions
 
 - Light scheme: paper canvas, near-black text, white fields and code blocks with thin rules. Dark scheme:
     near-black canvas, navy code blocks, Sky Blue links.
-- Blue is the link colour. Coral marks calls to action (primary buttons, the chat button) with near-black text, the
-    current-page marker in navigation, text selection and the logo circle.
+- Header, after the iscc-web top bar and the same in both schemes: Deep Navy with a grain texture, 64px high, the
+    product wordmark lockup in white/coral with 1 h at 30px (the brand minimum is 14px), controls in 78% white. Its
+    content shares the body's edges: the logo starts at the navigation, the repository widget ends with the content
+    column. Where the lockup is absent, the plain signature and the site name in spaced Light capitals stand in; on
+    phones the signature stands alone.
+- Blue is the link colour. Coral marks the chevron of the primary button, the current-page marker in navigation,
+    text selection and the logo circle. Text does not sit on coral; the iscc.ai chat button is the one exception.
+- Type: body copy in Readex Pro Regular at 16px on every screen width, as the theme holds Zensical's root size at
+    125%; the lead paragraph in Light at 1.2em; running text stops at about 75 characters per line, while tables,
+    code and cards use the full column.
+- Buttons follow the brand kit's button system: JetBrains Mono capitals, 46px high. The primary button is a pointed
+    near-black block with a white label and a coral chevron, white with a near-black label in the dark scheme; the
+    secondary button is a 1.5px outline in the text colour.
 - Admonitions are labelled and coloured by role: note and info Sky Blue, tip and success Lime, warning Yellow,
     danger Coral. The dark scheme uses a left rule and coloured title instead of a filled field.
 - Table headers, section labels and the footer directions use small JetBrains Mono capitals.

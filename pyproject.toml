@@ -20,6 +20,7 @@ classifiers = [
 # The theme overrides Zensical templates, so each release pins the Zensical version it is tested with.
 dependencies = [
     "zensical==0.1.0",
+    "fonttools[woff]>=4.65",
 ]
 
 [project.urls]

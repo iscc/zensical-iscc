@@ -27,7 +27,8 @@ uv run poe demo          # build the demo site and serve it on 127.0.0.1:45472
 - `zensical_iscc/theme/` - the theme directory Zensical loads; no Python files here, Zensical copies everything
     that is not a template into the built site
 - `zensical_iscc/__init__.py` - `THEME`, the object the `mkdocs.themes` entry point names
-- `zensical_iscc/cli.py`, `markdown.py`, `check.py`, `project.py` - the `zensical-iscc` command
+- `zensical_iscc/cli.py`, `markdown.py`, `check.py`, `project.py`, `wordmark.py` - the `zensical-iscc` command;
+    `wordmark.py` ports the brand kit's product lockup and must match `tests/fixtures/products/` byte for byte
 - `demo/` - demo site and reference configuration; tests build copies of it
 - `skills/iscc-docs-theme/` - agent skill and the docs workflow template for sites
 - `tests/` - pytest; real Zensical builds of the demo site in temporary directories
@@ -36,8 +37,8 @@ uv run poe demo          # build the demo site and serve it on 127.0.0.1:45472
 
 - `pyproject.toml` pins one Zensical version. Upgrading it means: bump the pin, build the demo, compare both colour
     schemes in a browser, run the tests, release.
-- Brand assets under `theme/assets/iscc/` (`tokens/`, `fonts/`, `logos/`, favicons) are copies; refresh them from
-    `../iscc-brand` and `../iscc-io/public/`, never edit them here. `vendor/` holds GLightbox 3.3.1 unchanged.
+- Brand assets under `theme/assets/iscc/` (`tokens/`, `fonts/`, `logos/`, favicons, `grain.png`) are copies;
+    refresh them from `../iscc-brand`, `../iscc-io/public/` and `../iscc-web/frontend/assets/`, never edit them here. `vendor/` holds GLightbox 3.3.1 unchanged.
 - Keep the theme's promise of no third-party requests; `zensical_iscc/check.py` enforces it for sites.
 - Every page option, check and command change is reflected in `README.md`, `demo/zensical.toml` and
     `skills/iscc-docs-theme/SKILL.md`.
@@ -50,10 +51,11 @@ uv run poe demo          # build the demo site and serve it on 127.0.0.1:45472
 - Templates run on MiniJinja, not Jinja2: attribute access on an undefined value raises. Guard with
     `{% set meta = page.meta or {} %}` before reading `meta.description`. `page.is_homepage` is unreliable, so
     `main.html` also checks `page.url == ""`.
-- The modern variant styles `.md-nav--primary .md-nav__item .md-nav__link--active` and
-    `.md-header__button.md-logo img`; overrides in `theme.css` must match that specificity.
-- Zensical sets `html { font-size: 125% }` (20px), rising to 137.5% and 150% on wide screens. Rem-based third-party
-    widgets render larger; pin pixel values for them.
+- The modern variant styles `.md-nav--primary .md-nav__item .md-nav__link--active`,
+    `.md-header__button.md-logo img` and `html .md-footer-meta.md-typeset a:not(:focus, :hover)`; overrides in
+    `theme.css` must match that specificity (a `:not()` adds the weight of its argument).
+- Zensical sets `html { font-size: 125% }` (20px), rising to 137.5% and 150% on wide screens; `theme.css` holds it
+    at 125%. Rem-based third-party widgets still render at 20px per rem; pin pixel values for them.
 - There is no plugin system for post-build steps; `zensical-iscc build` runs the Markdown export after
     `zensical build`.
 - `zensical build --clean` clears the build cache, not the site directory.

@@ -10,7 +10,7 @@ import re
 from pathlib import Path  # noqa: F401 (used in type comments)
 from urllib.parse import urlsplit
 
-from zensical_iscc import markdown, project
+from zensical_iscc import markdown, project, wordmark
 
 THEME_NAME = "zensical_iscc"
 ALLOWED_HOSTS = frozenset({"stats.iscc.codes", "iscc.ai"})
@@ -90,6 +90,26 @@ def metadata_findings(config):
     if not config.get("extra", {}).get("iscc", {}).get("tagline"):
         findings.append(warning("set `tagline` in [project.extra.iscc]: it completes the home page title"))
     return findings
+
+
+def product_findings(config):
+    # type: (dict) -> list[tuple[str, str]]
+    """Check that the site has a product name the header wordmark can be built from."""
+    name = wordmark.product_name(config)
+    if name is None:
+        return [warning("set `product` in [project.extra.iscc] or `repo_name`: the header lacks a product wordmark")]
+    if not wordmark.is_valid(name):
+        return [error(f"product {name!r} in [project.extra.iscc]: use lowercase words and hyphens, without iscc-")]
+    return []
+
+
+def wordmark_findings(config, built_dir):
+    # type: (dict, Path) -> list[tuple[str, str]]
+    """Check that the built site holds the product wordmark the header shows."""
+    name = wordmark.product_name(config)
+    if name and wordmark.is_valid(name) and not (built_dir / wordmark.OUTPUT).is_file():
+        return [error("the product wordmark is missing from the site; build with `zensical-iscc build`")]
+    return []
 
 
 def analytics_findings(config):
@@ -178,9 +198,11 @@ def check(config_path):
     override_dir = project.custom_dir(config_path, config)
     findings = theme_findings(config.get("theme", {}))
     findings += custom_dir_findings(override_dir)
-    findings += metadata_findings(config) + analytics_findings(config) + extra_asset_findings(config)
+    findings += metadata_findings(config) + product_findings(config)
+    findings += analytics_findings(config) + extra_asset_findings(config)
     built_dir = project.site_dir(config_path, config)
     if not built_dir.is_dir():
         return [*findings, warning("the site is not built; run `zensical-iscc build` to check its pages")]
     sources = markdown.page_sources(project.docs_dir(config_path, config), override_dir)
-    return findings + site_findings(built_dir) + markdown_findings(built_dir, sources)
+    findings += site_findings(built_dir) + markdown_findings(built_dir, sources)
+    return findings + wordmark_findings(config, built_dir)

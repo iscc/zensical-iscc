@@ -26,6 +26,7 @@ nav = [                                                               # site
 tagline = "Zensical theme for ISCC documentation" # site: home page title suffix
 copy_page = true                                  # "Copy page" button; needs `zensical-iscc build`
 chat = false                                      # iscc.ai chat widget; only on origins iscc.ai allows
+# product = "monitor"                             # site: header wordmark name; default: repo_name without iscc-
 
 [[project.extra.social]]
 icon = "fontawesome/brands/github"
