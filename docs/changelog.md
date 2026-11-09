@@ -7,7 +7,9 @@ description: What changed in each release of the ISCC theme
 
 To upgrade a site, change the `tag` in its `[tool.uv.sources]` and run `uv lock --upgrade-package zensical-iscc`.
 
-## Unreleased
+## 0.3.2 - 2026-11-09
+
+Pins **Zensical 0.1.0**.
 
 - **Diagrams open in a lightbox.** A click on a Mermaid diagram, or Enter on it, shows it as large as the screen
     allows, and never smaller than Mermaid drew it: on a phone, a diagram that the page shrinks becomes readable,
