@@ -104,6 +104,7 @@ project_logo → zensical_iscc.THEME_DIR, fontTools
 | `theme.css` overrides match Zensical's selector specificity                | Lower specificity loses silently (see mistakes)             |
 | `--md-mermaid-*` colors are set on `:root > *`, Zensical's selector        | Its sequence diagram variables derive from them there       |
 | `main.html` loads `vendor/mermaid/mermaid.min.js` iff the content has `<pre class="mermaid` | The bundle renders `pre.mermaid`; `check.page_findings` flags a diagram without `check.MERMAID_SCRIPT` |
+| On diagram pages `main.html` loads GLightbox, Mermaid, then `diagramzoom.js`, all before the bundle | `diagramzoom.js` wraps `mermaid.render`: the bundle draws into closed shadow roots and hands each to `bindFunctions`; `test_bundle_hands_each_diagram_to_bind_functions` |
 | Vendored Mermaid major equals the `mermaid@` major in the Zensical bundle  | The bundle drives that API; `test_vendored_mermaid_matches_the_bundle` |
 | Content width capped at 1385px; root font size held at 125%                | Layout and type scale                                       |
 | Templates run on MiniJinja                                                 | Attribute access on undefined raises; guard with `or {}`    |
@@ -156,7 +157,8 @@ the setting in `docs/configuration.md` and `skills/iscc-docs-theme/SKILL.md`.
 1. `uv run poe ci`; `test_header_is_zensicals_plus_the_projects_menu` fails if Zensical's header changed,
     `test_vendored_mermaid_matches_the_bundle` if the bundle loads another Mermaid major. Then copy `dist/mermaid.min.js`
     and `LICENSE` of that major's latest npm release that is at least two weeks old, and check the diagrams on
-    `components.md` in both schemes.
+    `components.md` in both schemes. `test_bundle_hands_each_diagram_to_bind_functions` fails if the bundle draws
+    diagrams differently; then adapt `diagramzoom.js` and check that a click on a diagram opens the lightbox.
 1. Add a `CHANGELOG.md` entry naming the pinned version.
 
 ### Release (*theme*)

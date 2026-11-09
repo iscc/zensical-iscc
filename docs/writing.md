@@ -83,7 +83,7 @@ Pages load nothing from other domains, except Plausible and, if chat is on, iscc
 - Keep images and badges in `docs/`. Do not link to images on other sites. Download shields.io badges one time and
     link to the copies.
 - To show an image in a lightbox, put it in `<a class="glightbox" href="...">`. The theme loads its own copy of
-    GLightbox, and only on pages with a lightbox.
+    GLightbox, and only on pages with a lightbox or a diagram.
 - For a diagram, write a [Mermaid](#diagrams) block or use an SVG file.
 
 [Command line](command-line.md#third-party-requests) lists the requests that the check cannot see.
@@ -107,5 +107,7 @@ custom_fences = [{ name = "mermaid", class = "mermaid" }]
 ```
 
 The theme loads its own copy of Mermaid, and only on pages with a diagram. The diagrams take the theme colors in both
-color schemes. [Components](components.md#diagrams) shows a flowchart and a sequence diagram. The Markdown copy of
-the page keeps the block, so agents read the diagram source.
+color schemes. A click on a diagram, or Enter on it, opens it in a lightbox, as large as the screen allows and never
+smaller than Mermaid drew it. So a diagram that the page shrinks on a phone becomes readable there.
+[Components](components.md#diagrams) shows a flowchart and a sequence diagram. The Markdown copy of the page keeps the
+block, so agents read the diagram source.

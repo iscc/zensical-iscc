@@ -58,6 +58,8 @@ uv run poe docs          # build the docs site and serve it on 127.0.0.1:45472
 
 ## Zensical quirks
 
+- The bundle draws Mermaid diagrams into closed shadow roots. `theme/assets/iscc/diagramzoom.js` reaches them by
+    wrapping `mermaid.render`; a test pins the bundle code it relies on.
 - Templates run on MiniJinja, not Jinja2: attribute access on an undefined value raises. Guard with
     `{% set meta = page.meta or {} %}` before reading `meta.description`. `page.is_homepage` is unreliable, so
     `main.html` also checks `page.url == ""`.

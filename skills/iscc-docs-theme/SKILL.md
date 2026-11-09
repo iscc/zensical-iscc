@@ -195,4 +195,5 @@ the plain text.
     cannot see.
 - Mermaid diagrams are fenced `mermaid` blocks with the reference `custom_fences` entry; the theme serves Mermaid.
     Keep them; turn diagrams in raw HTML (`<div class="mermaid">`) or for the `mermaid2` plugin into such blocks.
+    The theme opens diagrams in a lightbox on click, so remove site scripts that enlarge diagrams.
 - No `navigation.instant`: lightbox and Mermaid pages would then load from unpkg.com.

@@ -1363,6 +1363,15 @@ html .md-footer-meta.md-typeset a:hover {
   --md-mermaid-edge-color: #adb5bd;
 }
 
+/* Diagrams open in a lightbox (diagramzoom.js), on the page background of the color scheme */
+.md-typeset .iscc-diagram {
+  cursor: zoom-in;
+}
+
+.gslide-inline:has(.iscc-diagram-view) {
+  background: var(--md-default-bg-color);
+}
+
 /* ---------- Copy page split button ---------- */
 
 .copy-page-heading {

@@ -188,7 +188,18 @@ def test_vendored_mermaid_matches_the_bundle():
     assert wanted.group(1) == shipped.group(1)
 
 
-def test_mermaid_pages_load_the_vendored_mermaid(docs_config):
+def test_bundle_hands_each_diagram_to_bind_functions():
+    # diagramzoom.js learns the SVG from mermaid.render and the shadow root the bundle fills from bindFunctions
+    scripts = Path(zensical_ui.__file__).parent / "templates" / "assets" / "javascripts"
+    (bundle,) = scripts.glob("bundle.*.min.js")
+    pattern = (
+        r"\{svg:(\w+),bindFunctions:(\w+)\}=yield mermaid\.render\([^)]*\),"
+        r"(\w+)=\w+\.attachShadow\(\{mode:\"closed\"\}\);\3\.innerHTML=\1,[^;]*?\2==null\|\|\2\(\3\)"
+    )
+    assert re.search(pattern, bundle.read_text(encoding="utf-8"))
+
+
+def test_mermaid_pages_load_mermaid_glightbox_and_diagram_zoom(docs_config):
     docs = docs_config.parent / "docs"
     (docs / "flow.md").write_text("# Flow\n\n```mermaid\ngraph LR\n  A --> B\n```\n", encoding="utf-8")
     (docs / "example.md").write_text(
@@ -200,8 +211,18 @@ def test_mermaid_pages_load_the_vendored_mermaid(docs_config):
     assert '<script src="../assets/iscc/vendor/mermaid/mermaid.min.js"></script>' in flow
     assert flow.index("vendor/mermaid/mermaid.min.js") < flow.index("assets/javascripts/bundle.")
     assert (site / "assets" / "iscc" / "vendor" / "mermaid" / "mermaid.min.js").is_file()
+    # Diagrams open in GLightbox: diagramzoom.js wraps mermaid.render after both load, before the bundle draws
+    assert '<script src="../assets/iscc/diagramzoom.js"></script>' in flow
+    assert "vendor/glightbox/glightbox.min.css" in flow
+    zoom = flow.index("assets/iscc/diagramzoom.js")
+    assert flow.index("vendor/glightbox/glightbox.min.js") < zoom
+    assert flow.index("vendor/mermaid/mermaid.min.js") < zoom < flow.index("assets/javascripts/bundle.")
+    assert (site / "assets" / "iscc" / "diagramzoom.js").is_file()
     # Markup in code examples is no diagram
-    assert "vendor/mermaid" not in (site / "example" / "index.html").read_text(encoding="utf-8")
+    example = (site / "example" / "index.html").read_text(encoding="utf-8")
+    assert "vendor/mermaid" not in example
+    assert "glightbox" not in example
+    assert "diagramzoom" not in example
     assert "```mermaid\ngraph LR" in (site / "flow" / "index.md").read_text(encoding="utf-8")
     assert cli.main(["check", "--config-file", str(docs_config)]) == 0
 

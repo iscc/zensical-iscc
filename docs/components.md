@@ -147,6 +147,8 @@ print(code["iscc"])
 
 ## Diagrams
 
+Click a diagram to open it in a lightbox.
+
 ```mermaid
 graph LR
   A[Media file] --> B[Content-Code]

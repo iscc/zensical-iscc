@@ -3,8 +3,8 @@
 
   Extends the Zensical base template with brand stylesheets, social metadata,
   a link to each page's Markdown copy for agents, optional client-side
-  redirects, self-hosted GLightbox and Mermaid, and the theme's page
-  widgets (copy page, chat). Every request stays on the site's own origin
+  redirects, self-hosted GLightbox and Mermaid, click-to-zoom for diagrams,
+  and the theme's page widgets (copy page, chat). Every request stays on the site's own origin
   except Plausible analytics and, with chat enabled, iscc.ai. Site-specific
   behaviour is driven by `[project.extra.iscc]`:
 
@@ -40,7 +40,7 @@
 
 {% block styles %}
   {{ super() }}
-  {% if lightbox %}
+  {% if lightbox or mermaid %}
   <link rel="stylesheet" href="{{ 'assets/iscc/vendor/glightbox/glightbox.min.css' | url }}">
   {% endif %}
   <link rel="stylesheet" href="{{ 'assets/iscc/tokens/iscc.css' | url }}">
@@ -51,14 +51,17 @@
   Zensical's bundle fetches GLightbox and Mermaid from unpkg.com unless their
   globals are already defined, so the theme loads its own copies before the
   bundle runs, on the pages whose content carries lightbox anchors or diagrams.
+  Diagrams open in GLightbox too, through diagramzoom.js, which must run after
+  both and before the bundle.
 -#}
 {% block libs %}
   {{ super() }}
-  {% if lightbox %}
+  {% if lightbox or mermaid %}
   <script src="{{ 'assets/iscc/vendor/glightbox/glightbox.min.js' | url }}"></script>
   {% endif %}
   {% if mermaid %}
   <script src="{{ 'assets/iscc/vendor/mermaid/mermaid.min.js' | url }}"></script>
+  <script src="{{ 'assets/iscc/diagramzoom.js' | url }}"></script>
   {% endif %}
 {% endblock %}
 
